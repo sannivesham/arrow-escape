@@ -3,27 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Arrow Escape — The Ultimate Logic Puzzle Game</title>
+  <title>ARROUT — Think • Aim • Connect</title>
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏹</text></svg>">
 </head>
 <body>
 
-  <!-- Mobile Frame Container -->
+  <!-- Mobile App Frame -->
   <div class="mobile-app-frame">
+
+    <!-- Decorative Flora in Top-Right Background -->
+    <svg class="bg-flora-decor" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M120 180C140 130 160 90 190 60" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" />
+      <path d="M160 110C175 105 185 90 180 80C170 85 160 95 160 110Z" fill="#9AE6B4" opacity="0.6"/>
+      <path d="M140 140C155 135 165 120 160 110C150 115 140 125 140 140Z" fill="#BEE3F8" opacity="0.6"/>
+      <path d="M125 165C135 160 142 150 138 142C130 145 125 152 125 165Z" fill="#C6F6D5" opacity="0.5"/>
+      <path d="M185 65L195 50L180 52L185 65Z" fill="#9D96FA" opacity="0.8"/>
+    </svg>
     
-    <!-- Top Header -->
-    <header class="app-header">
-      <div class="header-left">
-        <span class="header-logo">⚡ ARROW ESCAPE</span>
+    <!-- Top Header (Home View) -->
+    <header id="main-app-header" class="app-header">
+      <div class="brand-block">
+        <svg class="brand-icon-svg" width="28" height="38" viewBox="0 0 30 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 2L3 17H11V34H19V17H27L15 2Z" fill="#152642" />
+          <path d="M11 36L15 32L19 36" stroke="#152642" stroke-width="2" stroke-linecap="round"/>
+          <path d="M11 39L15 35L19 39" stroke="#152642" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-text-col">
+          <span class="brand-title">ARROUT</span>
+          <span class="brand-subtitle">THINK • AIM • CONNECT</span>
+        </div>
       </div>
+
       <div class="header-right">
         <div class="coin-pill">
-          <span>🪙</span>
-          <span class="user-coin-count">250</span>
+          <div class="coin-icon-gold">★</div>
+          <span class="user-coin-count">2450</span>
         </div>
         <div class="avatar-thumbnail user-avatar-display" data-nav="profile">
-          🎯
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#334155">
+            <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" />
+          </svg>
         </div>
       </div>
     </header>
@@ -36,137 +56,364 @@
 
       <!-- ================= HOME SCREEN ================= -->
       <section id="screen-home" class="app-screen active">
-        <div class="hero-banner">
-          <h1 class="hero-title">Arrow Escape</h1>
-          <p class="hero-subtitle">Clear the board without getting blocked. Can you find the way out?</p>
-          <button class="btn-play-hero" data-nav="levels">PLAY CAMPAIGN</button>
+        
+        <!-- Welcome Greeting -->
+        <div class="welcome-section">
+          <div class="welcome-label">Welcome back,</div>
+          <h1 class="welcome-heading">Ready to Play?</h1>
+          <p class="welcome-desc">Sharpen your mind, find the right path and connect the arrows!</p>
         </div>
 
-        <div class="quick-modes-grid">
-          <div class="mode-card" data-nav="1v1">
-            <div class="mode-icon">⚔️</div>
-            <div class="mode-title">Online 1v1</div>
-            <div class="mode-desc">Duel live players on identical boards</div>
+        <!-- Featured Classic Mode Play Card -->
+        <div class="featured-play-card" data-nav="puzzle">
+          <div class="featured-left">
+            <span class="featured-tag">CLASSIC MODE</span>
+            <h2 class="featured-title">PLAY</h2>
+            <p class="featured-sub">Solve puzzles. Connect arrows.<br>Reach the goal.</p>
+            <div class="circle-arrow-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
           </div>
-          <div class="mode-card" data-nav="daily">
-            <div class="mode-icon">📅</div>
-            <div class="mode-title">Daily Challenge</div>
-            <div class="mode-desc">Special daily board + 50 coins reward</div>
+
+          <div class="featured-right-illustration">
+            <svg width="130" height="130" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="70" cy="115" rx="45" ry="10" fill="#CBD5E1" opacity="0.4"/>
+              <circle cx="70" cy="65" r="46" fill="#C7D2FE" />
+              <circle cx="70" cy="65" r="44" fill="#E0E7FF" />
+              <circle cx="70" cy="65" r="32" fill="#FED7AA" />
+              <circle cx="70" cy="65" r="30" fill="#FFEDD5" />
+              <circle cx="70" cy="65" r="18" fill="#FDBA74" />
+              <circle cx="70" cy="65" r="7" fill="#152642" />
+              <polygon points="50,22 55,28 47,30" fill="#FDE047" opacity="0.8"/>
+              <polygon points="105,35 112,38 107,44" fill="#F472B6" opacity="0.6"/>
+              <polygon points="90,105 96,112 88,114" fill="#86EFAC" opacity="0.7"/>
+              <g transform="rotate(-38 70 65)">
+                <rect x="68" y="0" width="4.5" height="66" rx="2" fill="#152642" />
+                <path d="M64 4L70 12L76 4L70 8Z" fill="#818CF8" />
+                <path d="M64 12L70 20L76 12L70 16Z" fill="#6366F1" />
+                <path d="M66 65L70 70L74 65Z" fill="#152642" />
+              </g>
+            </svg>
           </div>
+        </div>
+﻿        <!-- 2-Column Mode Cards Grid -->
+        <div class="modes-grid-container">
+
+          <!-- Card 1: Online 1v1 Battle -->
+          <div class="mode-grid-card card-pvp" data-nav="1v1">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <g transform="rotate(-45 27 27)">
+                    <rect x="24" y="6" width="6" height="34" rx="3" fill="#818CF8" />
+                    <rect x="25" y="6" width="4" height="34" rx="2" fill="#C7D2FE" />
+                    <rect x="18" y="32" width="18" height="5" rx="2" fill="#1E293B" />
+                    <circle cx="27" cy="42" r="3.5" fill="#FBBF24" />
+                  </g>
+                  <g transform="rotate(45 27 27)">
+                    <rect x="24" y="6" width="6" height="34" rx="3" fill="#6366F1" />
+                    <rect x="25" y="6" width="4" height="34" rx="2" fill="#A5B4FC" />
+                    <rect x="18" y="32" width="18" height="5" rx="2" fill="#1E293B" />
+                    <circle cx="27" cy="42" r="3.5" fill="#FBBF24" />
+                  </g>
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Online 1v1<br>Battle</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">Challenge real players</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
+          <!-- Card 2: Daily Challenge -->
+          <div class="mode-grid-card card-daily" data-nav="daily">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <rect x="9" y="12" width="36" height="34" rx="10" fill="#34D399" />
+                  <rect x="9" y="18" width="36" height="28" rx="8" fill="#FFFFFF" />
+                  <rect x="17" y="8" width="4" height="8" rx="2" fill="#059669" />
+                  <rect x="33" y="8" width="4" height="8" rx="2" fill="#059669" />
+                  <path d="M27 24L29 29.5H35L30.2 33L32 38.5L27 35L22 38.5L23.8 33L19 29.5H25L27 24Z" fill="#10B981" />
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Daily<br>Challenge</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">New puzzle every day</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
+          <!-- Card 3: Weekly Tournament -->
+          <div class="mode-grid-card card-tournament" data-nav="tournament">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <path d="M17 14H37V26C37 31.5 32.5 36 27 36C21.5 36 17 31.5 17 26V14Z" fill="#FBBF24" />
+                  <path d="M17 18H11C9 18 9 26 13 28L17 28" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M37 18H43C45 18 45 26 41 28L37 28" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+                  <rect x="24" y="36" width="6" height="6" fill="#D97706" />
+                  <rect x="18" y="42" width="18" height="4" rx="2" fill="#78350F" />
+                  <polygon points="27,20 28.5,23.5 32,23.5 29,25.5 30.5,29 27,27 23.5,29 25,25.5 22,23.5 25.5,23.5" fill="#FEF3C7"/>
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Weekly<br>Tournament</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">Compete & win</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
+          <!-- Card 4: Level Selection -->
+          <div class="mode-grid-card card-levels" data-nav="levels">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <rect x="20" y="10" width="14" height="14" rx="4" fill="#60A5FA" />
+                  <text x="27" y="21" font-size="10" font-weight="bold" fill="#FFF" text-anchor="middle">1</text>
+                  <rect x="12" y="26" width="14" height="14" rx="4" fill="#A78BFA" />
+                  <text x="19" y="37" font-size="10" font-weight="bold" fill="#FFF" text-anchor="middle">2</text>
+                  <rect x="28" y="26" width="14" height="14" rx="4" fill="#34D399" />
+                  <text x="35" y="37" font-size="10" font-weight="bold" fill="#FFF" text-anchor="middle">3</text>
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Level<br>Selection</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">Choose your level</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
+          <!-- Card 5: Shop -->
+          <div class="mode-grid-card card-shop" data-nav="shop">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <path d="M10 20C10 16 14 14 27 14C40 14 44 16 44 20L41 26C40 28 36 28 35 26C34 28 30 28 29 26C28 28 24 28 23 26C22 28 18 28 17 26C16 28 13 28 12 26L10 20Z" fill="#C084FC" />
+                  <rect x="13" y="26" width="28" height="16" rx="4" fill="#F1F5F9" />
+                  <rect x="17" y="30" width="20" height="12" rx="2" fill="#E2E8F0" />
+                  <circle cx="27" cy="36" r="6" fill="#FBBF24" />
+                  <text x="27" y="39" font-size="7" font-weight="bold" fill="#78350F" text-anchor="middle">★</text>
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Shop</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">Get coins & items</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
+          <!-- Card 6: Leaderboard -->
+          <div class="mode-grid-card card-leaderboard" data-nav="tournament">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <path d="M21 16L24 13L27 17L30 13L33 16L32 19H22L21 16Z" fill="#FBBF24" />
+                  <rect x="21" y="22" width="12" height="20" rx="3" fill="#6366F1" />
+                  <text x="27" y="35" font-size="10" font-weight="bold" fill="#FFF" text-anchor="middle">1</text>
+                  <rect x="10" y="28" width="11" height="14" rx="2" fill="#818CF8" />
+                  <text x="15.5" y="39" font-size="8" font-weight="bold" fill="#FFF" text-anchor="middle">2</text>
+                  <rect x="33" y="32" width="11" height="10" rx="2" fill="#A5B4FC" />
+                  <text x="38.5" y="40" font-size="8" font-weight="bold" fill="#FFF" text-anchor="middle">3</text>
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Leaderboard</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">See top players</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
+          <!-- Card 7: Profile -->
+          <div class="mode-grid-card card-profile" data-nav="profile">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <circle cx="27" cy="27" r="18" fill="#93C5FD" />
+                  <circle cx="27" cy="22" r="7" fill="#1E3A8A" />
+                  <path d="M15 39C15 34 20 31 27 31C34 31 39 34 39 39" fill="#1E3A8A" />
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Profile</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">Your stats & progress</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
+          <!-- Card 8: Settings -->
+          <div class="mode-grid-card card-settings" data-nav="settings">
+            <div class="card-top-content">
+              <div class="card-3d-icon">
+                <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
+                  <path d="M27 17C21.5 17 17 21.5 17 27C17 32.5 21.5 37 27 37C32.5 37 37 32.5 37 27C37 21.5 32.5 17 27 17Z" fill="#334155" />
+                  <circle cx="27" cy="27" r="5" fill="#E2E8F0" />
+                  <rect x="25" y="10" width="4" height="6" rx="2" fill="#334155" />
+                  <rect x="25" y="38" width="4" height="6" rx="2" fill="#334155" />
+                  <rect x="10" y="25" width="6" height="4" rx="2" fill="#334155" />
+                  <rect x="38" y="25" width="6" height="4" rx="2" fill="#334155" />
+                </svg>
+              </div>
+              <div class="card-title-col">
+                <div class="card-heading">Settings</div>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="card-desc-text">Game preferences</div>
+              <div class="card-arrow-circle">→</div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="tournament-banner-card" data-nav="tournament">
-          <div class="t-banner-left">
-            <span class="t-tag">WEEKLY EVENT</span>
-            <div class="t-title">Weekly Tournament</div>
-            <div class="t-sub">Complete 10 levels to qualify for the Championship!</div>
-          </div>
-          <div class="t-banner-right">
-            <span style="font-size: 2rem;">🏆</span>
-          </div>
-        </div>
-
-        <div class="quick-modes-grid">
-          <div class="mode-card" data-nav="shop">
-            <div class="mode-icon">🛍️</div>
-            <div class="mode-title">Cosmetics Shop</div>
-            <div class="mode-desc">Themes, arrow skins, avatars & frames</div>
-          </div>
-          <div class="mode-card" data-nav="profile">
-            <div class="mode-icon">👤</div>
-            <div class="mode-title">Player Profile</div>
-            <div class="mode-desc">Achievements, stats & leaderboard rank</div>
-          </div>
-        </div>
       </section>
-
-      <!-- ================= LEVEL SELECT SCREEN ================= -->
-      <section id="screen-levels" class="app-screen">
-        <div class="screen-header-bar">
-          <button class="btn-back">←</button>
-          <h2 class="screen-title">Campaign Levels</h2>
-          <div style="width: 36px;"></div>
-        </div>
-
-        <div class="diff-filter-bar">
-          <button class="diff-pill active" data-diff="easy">EASY</button>
-          <button class="diff-pill" data-diff="medium">MEDIUM</button>
-          <button class="diff-pill" data-diff="hard">HARD</button>
-          <button class="diff-pill" data-diff="expert">EXPERT</button>
-        </div>
-
-        <div id="levels-grid-container" class="levels-grid">
-          <!-- Dynamically populated -->
-        </div>
-      </section>
-
-      <!-- ================= PUZZLE SCREEN ================= -->
+﻿      <!-- ================= LEVEL GAMEPLAY SCREEN (EXACT MATCH TO SCREENSHOT 2) ================= -->
       <section id="screen-puzzle" class="app-screen">
-        <div class="puzzle-hud">
-          <div class="hud-left">
-            <span id="puzzle-mode-title" class="puzzle-mode-title">Level 1</span>
-            <span id="puzzle-mode-badge" class="puzzle-mode-badge">EASY</span>
+        
+        <!-- Level Screen Header (<  ✦ Level 36 ✦  2450  ⚙) -->
+        <div class="level-top-header">
+          <button class="btn-circle-action btn-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="level-title-banner">
+            <span class="sparkle-icon">✦</span>
+            <span id="puzzle-level-title" class="level-title-text">Level 36</span>
+            <span class="sparkle-icon">✦</span>
           </div>
-          <div class="hud-counter-pill">
-            <span>Remaining:</span>
-            <span id="hud-arrows-remaining">0</span>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="coin-pill" style="padding: 4px 10px; font-size: 0.85rem;">
+              <div class="coin-icon-gold" style="width: 16px; height: 16px; font-size: 0.55rem;">★</div>
+              <span class="user-coin-count">2450</span>
+            </div>
+            <button class="btn-circle-action" data-nav="settings" style="width: 36px; height: 36px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </button>
           </div>
-          <button class="btn-back" style="width: 32px; height: 32px; font-size: 0.9rem;">✕</button>
         </div>
 
-        <!-- 1v1 Opponent Live Progress Header (Only visible in 1v1 mode) -->
-        <div id="pvp-live-hud" class="pvp-live-hud">
-          <div class="pvp-opp-header">
+        <!-- Sub-header Bar (Remaining Pill | Hearts | Normal) -->
+        <div class="level-sub-bar">
+          <div class="remaining-pill">
+            <span style="transform: rotate(45deg); display: inline-block;">➔</span>
+            <span id="level-arrows-remaining">52</span>
+          </div>
+
+          <div id="level-hearts-row" class="hearts-container">
+            <span class="heart-full">❤️</span>
+            <span class="heart-full">❤️</span>
+            <span class="heart-empty">🤍</span>
+          </div>
+
+          <div id="level-diff-badge" class="diff-badge-pill">Normal</div>
+        </div>
+
+        <!-- 1v1 Opponent Live Progress (Only during 1v1 duels) -->
+        <div id="pvp-live-hud" style="display: none; background: #FFF; padding: 10px 14px; border-radius: 16px; box-shadow: var(--clay-shadow); margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px;">
             <span>Opponent: <b id="pvp-opp-name">Player</b></span>
             <span id="pvp-opp-count">16 Left</span>
           </div>
-          <div class="pvp-opp-bar-bg">
-            <div id="pvp-opp-progress-bar" class="pvp-opp-bar-fill"></div>
+          <div style="width: 100%; height: 6px; background: #F1F5F9; border-radius: 4px; overflow: hidden;">
+            <div id="pvp-opp-progress-bar" style="width: 0%; height: 100%; background: #F43F5E; transition: width 0.3s;"></div>
           </div>
         </div>
 
-        <!-- Board Viewport -->
-        <div class="board-viewport">
-          <div id="game-arrow-board" class="arrow-board theme-classic">
-            <!-- Dynamically populated cells and arrows -->
+        <!-- Dotted Board Viewport with Bending Arrow Paths -->
+        <div class="puzzle-board-card">
+          <div id="game-bending-board" style="width: 100%; height: 100%; position: relative;"></div>
+        </div>
+
+        <!-- Bottom Powerups (Lightbulb & Ruler Tool) -->
+        <div class="puzzle-powerups-bottom">
+          <div id="btn-powerup-hint" class="powerup-circle-btn">
+            <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
+              <path d="M18 6C12.48 6 8 10.48 8 16C8 19.5 9.8 22.5 12.5 24.2V27C12.5 27.6 12.9 28 13.5 28H22.5C23.1 28 23.5 27.6 23.5 27V24.2C26.2 22.5 28 19.5 28 16C28 10.48 23.52 6 18 6Z" fill="#FBBF24" />
+              <rect x="14" y="28" width="8" height="2" rx="1" fill="#D97706" />
+              <rect x="15" y="30" width="6" height="2" rx="1" fill="#B45309" />
+              <circle cx="18" cy="16" r="4" fill="#FEF3C7" opacity="0.6"/>
+            </svg>
+            <span id="count-powerup-hint" class="powerup-counter-badge">2</span>
+          </div>
+
+          <div id="btn-powerup-undo" class="powerup-circle-btn">
+            <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+              <rect x="6" y="14" width="24" height="8" rx="2" fill="#8B85F8" transform="rotate(-30 18 18)" />
+              <line x1="12" y1="15" x2="14" y2="19" stroke="#FFF" stroke-width="1.5" />
+              <line x1="16" y1="13" x2="18" y2="17" stroke="#FFF" stroke-width="1.5" />
+              <line x1="20" y1="11" x2="22" y2="15" stroke="#FFF" stroke-width="1.5" />
+            </svg>
           </div>
         </div>
 
-        <!-- Powerups Bar -->
-        <div id="powerups-bar" class="powerups-bar">
-          <button id="btn-powerup-hint" class="powerup-btn">
-            <span>💡 Hint</span>
-            <span id="count-powerup-hint" class="powerup-badge">3</span>
-          </button>
-          <button id="btn-powerup-undo" class="powerup-btn">
-            <span>↩️ Undo</span>
-            <span id="count-powerup-undo" class="powerup-badge">3</span>
-          </button>
-          <button id="btn-powerup-safe" class="powerup-btn">
-            <span>🛡️ Safe</span>
-            <span id="count-powerup-safe" class="powerup-badge">2</span>
-          </button>
+      </section>
+
+      <!-- ================= LEVEL SELECTION SCREEN ================= -->
+      <section id="screen-levels" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back-soft btn-back">←</button>
+          <h2 class="screen-main-title">Level Selection</h2>
+          <div style="width: 40px;"></div>
         </div>
+
+        <div class="diff-pill-bar">
+          <button class="diff-filter-pill active" data-diff="easy">EASY</button>
+          <button class="diff-filter-pill" data-diff="medium">MEDIUM</button>
+          <button class="diff-filter-pill" data-diff="hard">HARD</button>
+          <button class="diff-filter-pill" data-diff="expert">EXPERT</button>
+        </div>
+
+        <div id="levels-grid-container" class="levels-clay-grid"></div>
       </section>
 
       <!-- ================= 1v1 PVP SCREEN ================= -->
       <section id="screen-1v1" class="app-screen">
         <div class="screen-header-bar">
-          <button class="btn-back">←</button>
-          <h2 class="screen-title">Online 1v1 Duel</h2>
-          <div style="width: 36px;"></div>
+          <button class="btn-back-soft btn-back">←</button>
+          <h2 class="screen-main-title">Online 1v1 Battle</h2>
+          <div style="width: 40px;"></div>
         </div>
 
-        <div class="matchmaking-box">
-          <div id="matchmaking-radar" class="radar-spinner"></div>
-          <h3 id="matchmaking-status-text" style="margin-bottom: 8px;">Ready to Duel</h3>
-          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 24px;">
+        <div style="background: #FFF; border-radius: 28px; padding: 32px 24px; text-align: center; box-shadow: var(--clay-shadow); display: flex; flex-direction: column; align-items: center; margin-top: 10px;">
+          <div id="matchmaking-radar" class="radar-spinner-soft"></div>
+          <h3 id="matchmaking-status-text" style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--text-navy); margin-bottom: 8px;">Ready to Duel</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 24px;">
             Compete on identical arrow puzzle boards in real-time. First player to clear all arrows wins rating MMR and bonus coins!
           </p>
 
-          <button id="btn-start-matchmaking" class="btn-play-hero" style="width: 100%;">FIND OPPONENT</button>
-          <div id="matchmaking-actions" style="margin-top: 12px; display: none;">
-            <button id="btn-cancel-matchmaking" class="btn-shop-action" style="padding: 10px 20px;">Cancel Search</button>
+          <button id="btn-start-matchmaking" class="btn-primary-clay">FIND OPPONENT</button>
+          <div id="matchmaking-actions" style="margin-top: 14px; display: none;">
+            <button id="btn-cancel-matchmaking" class="btn-back-soft" style="width: auto; padding: 10px 24px; border-radius: 20px; font-size: 0.85rem;">Cancel Search</button>
           </div>
         </div>
       </section>
@@ -174,125 +421,120 @@
       <!-- ================= WEEKLY TOURNAMENT SCREEN ================= -->
       <section id="screen-tournament" class="app-screen">
         <div class="screen-header-bar">
-          <button class="btn-back">←</button>
-          <h2 class="screen-title">Weekly Tournament</h2>
-          <div style="width: 36px;"></div>
+          <button class="btn-back-soft btn-back">←</button>
+          <h2 class="screen-main-title">Weekly Tournament</h2>
+          <div style="width: 40px;"></div>
         </div>
 
-        <div class="tournament-card-main">
+        <div style="background: #FFF; border-radius: 28px; padding: 22px; box-shadow: var(--clay-shadow); margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 style="font-weight: 800;">Championship Cup</h3>
-            <span style="font-size: 0.8rem; color: var(--accent-gold); font-weight: 700;">Ends in: <span id="tournament-time-remaining">--</span></span>
+            <h3 style="font-family: var(--font-serif); font-size: 1.3rem; color: var(--text-navy);">Championship Cup</h3>
+            <span style="font-size: 0.82rem; color: var(--accent-gold); font-weight: 800;">Ends in: <span id="tournament-time-remaining">--</span></span>
           </div>
 
-          <!-- Legal & Platform Notice per Prompt Section 8 & 19 -->
-          <div class="legal-cash-disclaimer">
-            ⚖️ <b>Regulatory Notice:</b> The planned ₹100 cash prize is disabled pending legal verification under Indian law and Google Play policies. Compete for the verified Champion Trophy, 1,000 Coins, and Leaderboard glory!
+          <div style="background: #FFF5F5; border: 1px solid #FED7D7; border-radius: 14px; padding: 10px 14px; font-size: 0.72rem; color: #C53030; line-height: 1.4; margin-bottom: 16px;">
+            ⚖️ <b>Regulatory Notice:</b> Planned ₹100 cash prize is disabled pending legal verification under Indian law and Google Play policies. Compete for the verified Champion Trophy, 1,000 Coins, and Leaderboard glory!
           </div>
 
-          <div style="margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700;">
-              <span>Weekly Eligibility Requirement</span>
+          <div style="margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; color: var(--text-navy);">
+              <span>Weekly Eligibility (10 Distinct Levels)</span>
               <span id="tournament-eligibility-count">0 / 10 Levels</span>
             </div>
-            <div class="eligibility-meter-bg">
-              <div id="tournament-eligibility-fill" class="eligibility-meter-fill"></div>
+            <div style="width: 100%; height: 10px; background: #EDF2F7; border-radius: 6px; overflow: hidden; margin: 10px 0 6px 0;">
+              <div id="tournament-eligibility-fill" style="height: 100%; background: linear-gradient(90deg, #38BDF8, #F59E0B); width: 0%; transition: width 0.4s;"></div>
             </div>
-            <div id="tournament-locked-msg" style="font-size: 0.75rem; color: #f43f5e; margin-top: 4px;">
+            <div id="tournament-locked-msg" style="font-size: 0.75rem; color: #E53E3E; margin-top: 4px;">
               Complete 10 distinct campaign levels this week to unlock your entry!
             </div>
           </div>
 
-          <button id="btn-enter-tournament" class="btn-play-hero" style="width: 100%;" disabled>
+          <button id="btn-enter-tournament" class="btn-primary-clay" disabled>
             ENTER TOURNAMENT PUZZLE
           </button>
         </div>
 
-        <h3 style="margin-bottom: 10px; font-size: 1rem;">Verified Leaderboard</h3>
-        <div id="tournament-leaderboard-rows" class="leaderboard-container">
-          <!-- Dynamically populated -->
-        </div>
+        <h3 style="font-family: var(--font-serif); margin-bottom: 10px; font-size: 1.15rem; color: var(--text-navy);">Verified Leaderboard</h3>
+        <div id="tournament-leaderboard-rows" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </section>
 
       <!-- ================= CUSTOMIZATION SHOP ================= -->
       <section id="screen-shop" class="app-screen">
         <div class="screen-header-bar">
-          <button class="btn-back">←</button>
-          <h2 class="screen-title">Customization Shop</h2>
+          <button class="btn-back-soft btn-back">←</button>
+          <h2 class="screen-main-title">Customization Shop</h2>
           <div class="coin-pill">
-            <span>🪙</span>
-            <span class="user-coin-count">250</span>
+            <div class="coin-icon-gold">★</div>
+            <span class="user-coin-count">2450</span>
           </div>
         </div>
 
-        <div class="shop-tabs">
-          <button class="shop-tab active" data-cat="themes">Board Themes</button>
-          <button class="shop-tab" data-cat="skins">Arrow Skins</button>
+        <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 16px; padding-bottom: 4px;">
+          <button class="shop-tab active" data-cat="themes">Themes</button>
+          <button class="shop-tab" data-cat="skins">Arrows</button>
           <button class="shop-tab" data-cat="avatars">Avatars</button>
-          <button class="shop-tab" data-cat="frames">Profile Frames</button>
-          <button class="shop-tab" data-cat="effects">Victory Effects</button>
+          <button class="shop-tab" data-cat="frames">Frames</button>
+          <button class="shop-tab" data-cat="effects">Effects</button>
         </div>
 
-        <div id="shop-items-container" class="shop-grid">
-          <!-- Dynamically populated -->
-        </div>
+        <div id="shop-items-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
       </section>
 
       <!-- ================= PLAYER PROFILE ================= -->
       <section id="screen-profile" class="app-screen">
         <div class="screen-header-bar">
-          <button class="btn-back">←</button>
-          <h2 class="screen-title">Player Profile</h2>
-          <button id="btn-settings-open" class="btn-back" data-nav="settings">⚙️</button>
+          <button class="btn-back-soft btn-back">←</button>
+          <h2 class="screen-main-title">Player Profile</h2>
+          <button id="btn-settings-open" class="btn-back-soft" data-nav="settings">⚙️</button>
         </div>
 
-        <div class="profile-card-hero">
-          <div id="profile-avatar-large" class="profile-avatar-large">🎯</div>
-          <input id="profile-username-input" class="profile-name-edit" type="text" value="ArrowPilot" maxlength="16" title="Tap to edit username">
-          <div id="profile-player-id" class="profile-id-text">ID: AE-000000</div>
+        <div style="background: #FFF; border-radius: 28px; padding: 22px; text-align: center; box-shadow: var(--clay-shadow); margin-bottom: 16px;">
+          <div id="profile-avatar-large" style="width: 80px; height: 80px; border-radius: 50%; background: #E8EEF8; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; margin: 0 auto 12px auto;">🎯</div>
+          <input id="profile-username-input" type="text" value="ArrowPilot" maxlength="16" style="background: #F1F5F9; border: 1px solid #CBD5E1; color: var(--text-navy); font-size: 1.15rem; font-weight: 800; text-align: center; padding: 6px 14px; border-radius: 12px; margin-bottom: 4px;">
+          <div id="profile-player-id" style="font-size: 0.75rem; color: var(--text-muted);">ID: AE-000000</div>
         </div>
 
-        <div class="stats-grid-row">
-          <div class="stat-cell">
-            <div id="profile-stat-clears" class="val">0</div>
-            <div class="lbl">Levels Cleared</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px;">
+          <div style="background: #FFF; border-radius: 16px; padding: 12px 4px; text-align: center; box-shadow: var(--clay-shadow);">
+            <div id="profile-stat-clears" style="font-weight: 800; font-size: 1.05rem; color: var(--text-navy);">0</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted);">Cleared</div>
           </div>
-          <div class="stat-cell">
-            <div id="profile-stat-wins" class="val">0W-0L</div>
-            <div class="lbl">1v1 Record</div>
+          <div style="background: #FFF; border-radius: 16px; padding: 12px 4px; text-align: center; box-shadow: var(--clay-shadow);">
+            <div id="profile-stat-wins" style="font-weight: 800; font-size: 1.05rem; color: var(--text-navy);">0W-0L</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted);">1v1 Record</div>
           </div>
-          <div class="stat-cell">
-            <div id="profile-stat-winrate" class="val">0%</div>
-            <div class="lbl">Win Rate</div>
+          <div style="background: #FFF; border-radius: 16px; padding: 12px 4px; text-align: center; box-shadow: var(--clay-shadow);">
+            <div id="profile-stat-winrate" style="font-weight: 800; font-size: 1.05rem; color: var(--text-navy);">0%</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted);">Win Rate</div>
           </div>
-          <div class="stat-cell">
-            <div id="profile-stat-rating" class="val">1200</div>
-            <div class="lbl">MMR Rating</div>
+          <div style="background: #FFF; border-radius: 16px; padding: 12px 4px; text-align: center; box-shadow: var(--clay-shadow);">
+            <div id="profile-stat-rating" style="font-weight: 800; font-size: 1.05rem; color: var(--text-navy);">1200</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted);">Rating</div>
           </div>
         </div>
 
-        <h3 style="margin-bottom: 10px; font-size: 1rem;">Achievements & Trophies</h3>
-        <div id="profile-achievements-list" class="achievements-list">
-          <!-- Dynamically populated -->
-        </div>
+        <h3 style="font-family: var(--font-serif); margin-bottom: 10px; font-size: 1.15rem; color: var(--text-navy);">Achievements & Trophies</h3>
+        <div id="profile-achievements-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </section>
 
       <!-- ================= DAILY CHALLENGE SCREEN ================= -->
       <section id="screen-daily" class="app-screen">
         <div class="screen-header-bar">
-          <button class="btn-back">←</button>
-          <h2 class="screen-title">Daily Challenge</h2>
-          <div style="width: 36px;"></div>
+          <button class="btn-back-soft btn-back">←</button>
+          <h2 class="screen-main-title">Daily Challenge</h2>
+          <div style="width: 40px;"></div>
         </div>
 
-        <div class="hero-banner" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15));">
-          <div style="font-size: 2.2rem; margin-bottom: 8px;">📅</div>
-          <h2 id="daily-challenge-date" class="hero-title">2026-10-15</h2>
-          <p class="hero-subtitle">Every day brings a unique deterministic puzzle! Solve today's challenge to earn 50 bonus coins and build your streak.</p>
-          <div style="margin-bottom: 16px; font-weight: 800; color: var(--accent-gold);">
+        <div style="background: linear-gradient(135deg, #EBF8F2 0%, #DCF3E8 100%); border-radius: 28px; padding: 26px 20px; text-align: center; box-shadow: var(--clay-shadow);">
+          <div style="font-size: 2.8rem; margin-bottom: 8px;">📅</div>
+          <h2 id="daily-challenge-date" style="font-family: var(--font-serif); font-size: 1.8rem; color: var(--text-navy); margin-bottom: 8px;">2026-10-15</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.45; margin-bottom: 16px;">
+            Every day brings a unique deterministic puzzle! Solve today's challenge to earn 50 bonus coins and build your streak.
+          </p>
+          <div style="margin-bottom: 20px; font-weight: 800; color: #059669;">
             🔥 Current Streak: <span id="daily-streak-count">0</span> Days
           </div>
-          <button id="btn-play-daily" class="btn-play-hero" style="background: linear-gradient(135deg, #059669, #10b981);">
+          <button id="btn-play-daily" class="btn-primary-clay" style="background: #059669;">
             PLAY TODAY'S PUZZLE
           </button>
         </div>
@@ -301,32 +543,32 @@
       <!-- ================= SETTINGS SCREEN ================= -->
       <section id="screen-settings" class="app-screen">
         <div class="screen-header-bar">
-          <button class="btn-back">←</button>
-          <h2 class="screen-title">Settings</h2>
-          <div style="width: 36px;"></div>
+          <button class="btn-back-soft btn-back">←</button>
+          <h2 class="screen-main-title">Settings</h2>
+          <div style="width: 40px;"></div>
         </div>
 
-        <div class="matchmaking-box" style="align-items: stretch; text-align: left;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="background: #FFF; border-radius: 28px; padding: 26px 22px; box-shadow: var(--clay-shadow);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
             <div>
-              <div style="font-weight: 800;">Sound Effects</div>
+              <div style="font-weight: 800; color: var(--text-navy);">Sound Effects</div>
               <div style="font-size: 0.75rem; color: var(--text-muted);">Web Audio procedural synthesizer</div>
             </div>
-            <input id="setting-sound-toggle" type="checkbox" checked style="width: 22px; height: 22px; accent-color: var(--accent-cyan);">
+            <input id="setting-sound-toggle" type="checkbox" checked style="width: 22px; height: 22px; accent-color: #6366F1;">
           </div>
 
           <div style="margin-bottom: 20px;">
-            <div style="font-weight: 800; margin-bottom: 6px;">Audio Volume</div>
-            <input id="setting-volume-slider" type="range" min="0" max="100" value="70" style="width: 100%; accent-color: var(--accent-cyan);">
+            <div style="font-weight: 800; color: var(--text-navy); margin-bottom: 6px;">Audio Volume</div>
+            <input id="setting-volume-slider" type="range" min="0" max="100" value="70" style="width: 100%; accent-color: #6366F1;">
           </div>
 
-          <div style="margin-bottom: 24px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
-            <b>About Arrow Escape:</b><br>
-            Version 1.0.0 (Web Edition)<br>
+          <div style="margin-bottom: 24px; font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;">
+            <b>About ARROUT:</b><br>
+            Version 2.0.0 (Bending Arrow Neo Edition)<br>
             Multi-platform client with cloud sync, anti-farming wallet, and server-verified tournament timing.
           </div>
 
-          <button id="btn-reset-data" class="btn-shop-action" style="background: #e11d48; color: #fff; padding: 12px;">
+          <button id="btn-reset-data" style="width: 100%; background: #FEE2E2; border: 1px solid #FECACA; color: #DC2626; padding: 12px; border-radius: 16px; font-weight: 800; cursor: pointer;">
             Reset Local Progress
           </button>
         </div>
@@ -335,90 +577,112 @@
     </main>
 
     <!-- Synchronized 3-2-1 Countdown Overlay -->
-    <div id="countdown-overlay" class="countdown-overlay">
-      <div id="countdown-text" class="countdown-text">3</div>
+    <div id="countdown-overlay" style="position: absolute; inset: 0; background: rgba(250, 246, 240, 0.92); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 60; backdrop-filter: blur(8px);">
+      <div id="countdown-text" style="font-family: var(--font-serif); font-size: 6rem; font-weight: 900; color: #152642;">3</div>
     </div>
 
     <!-- Victory Modal -->
     <div id="modal-victory" class="app-modal">
-      <div class="modal-content-card">
+      <div class="modal-clay-card">
         <div style="font-size: 2.8rem; margin-bottom: 6px;">🎉</div>
-        <h2 id="victory-title" class="modal-title">Level Cleared!</h2>
-        <div class="modal-stats-box">
+        <h2 id="victory-title" class="modal-title-serif">Level Cleared!</h2>
+        <div class="modal-stats-soft">
           <div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">TIME</div>
-            <div id="victory-stat-time" style="font-weight: 800; font-size: 1.1rem;">0s</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">TIME</div>
+            <div id="victory-stat-time" style="font-weight: 800; font-size: 1.1rem; color: var(--text-navy);">0s</div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">MOVES</div>
-            <div id="victory-stat-moves" style="font-weight: 800; font-size: 1.1rem;">0</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">MOVES</div>
+            <div id="victory-stat-moves" style="font-weight: 800; font-size: 1.1rem; color: var(--text-navy);">0</div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">REWARD</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">REWARD</div>
             <div id="victory-stat-coins" style="font-weight: 800; font-size: 1.1rem; color: var(--accent-gold);">+10 Coins</div>
           </div>
         </div>
-        <button id="btn-victory-next" class="btn-primary-action">CONTINUE</button>
+        <button id="btn-victory-next" class="btn-primary-clay">CONTINUE</button>
       </div>
     </div>
 
     <!-- 1v1 Result Modal -->
     <div id="modal-1v1-result" class="app-modal">
-      <div class="modal-content-card">
-        <h2 id="pvp-result-title" class="modal-title">VICTORY!</h2>
-        <p id="pvp-result-subtitle" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;"></p>
-        <div class="modal-stats-box">
+      <div class="modal-clay-card">
+        <h2 id="pvp-result-title" class="modal-title-serif">VICTORY!</h2>
+        <p id="pvp-result-subtitle" style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;"></p>
+        <div class="modal-stats-soft">
           <div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">RATING</div>
-            <div id="pvp-rating-change" style="font-weight: 800; font-size: 1rem;">+32 MMR</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">RATING</div>
+            <div id="pvp-rating-change" style="font-weight: 800; font-size: 1rem; color: #10B981;">+32 MMR</div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">REWARD</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">REWARD</div>
             <div id="pvp-coins-earned" style="font-weight: 800; font-size: 1rem; color: var(--accent-gold);">+30 Coins</div>
           </div>
         </div>
         <div style="display: flex; gap: 10px;">
-          <button id="btn-pvp-rematch" class="btn-primary-action">PLAY AGAIN</button>
-          <button id="btn-pvp-home" class="btn-shop-action" style="padding: 12px 18px;">HOME</button>
+          <button id="btn-pvp-rematch" class="btn-primary-clay">PLAY AGAIN</button>
+          <button id="btn-pvp-home" class="btn-back-soft" style="width: auto; padding: 0 20px; border-radius: 18px;">HOME</button>
         </div>
       </div>
     </div>
 
     <!-- Confetti Particle Container -->
-    <div id="confetti-canvas-wrapper" class="confetti-container"></div>
+    <div id="confetti-canvas-wrapper" style="position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 105;"></div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-      <button class="nav-tab active" data-nav="home">
-        <span class="tab-icon">🏠</span>
+    <!-- Floating Bottom Navigation Bar -->
+    <nav class="floating-bottom-nav">
+      <button class="nav-pill-btn active" data-nav="home">
+        <div class="nav-icon-wrapper">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20H10Z"/>
+          </svg>
+        </div>
         <span>Home</span>
       </button>
-      <button class="nav-tab" data-nav="levels">
-        <span class="tab-icon">🎯</span>
-        <span>Campaign</span>
+
+      <button class="nav-pill-btn" data-nav="puzzle">
+        <div class="nav-icon-wrapper">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5V19L19 12L8 5Z"/>
+          </svg>
+        </div>
+        <span>Play</span>
       </button>
-      <button class="nav-tab" data-nav="1v1">
-        <span class="tab-icon">⚔️</span>
-        <span>1v1 Duel</span>
+
+      <button class="nav-pill-btn" data-nav="1v1">
+        <div class="nav-icon-wrapper">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6.92 5L5 6.92L8.08 10L5 13.08L6.92 15L10 11.92L13.08 15L15 13.08L11.92 10L15 6.92L13.08 5L10 8.08L6.92 5Z"/>
+          </svg>
+        </div>
+        <span>Battle</span>
       </button>
-      <button class="nav-tab" data-nav="tournament">
-        <span class="tab-icon">🏆</span>
-        <span>Tournament</span>
-      </button>
-      <button class="nav-tab" data-nav="shop">
-        <span class="tab-icon">🛍️</span>
+
+      <button class="nav-pill-btn" data-nav="shop">
+        <div class="nav-icon-wrapper">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4V2H20V4ZM21 6H3L2 14H3V20H13V14H15V20H21V14H22L21 6ZM5 18V14H11V18H5ZM19 18H17V14H19V18Z"/>
+          </svg>
+        </div>
         <span>Shop</span>
       </button>
-      <button class="nav-tab" data-nav="profile">
-        <span class="tab-icon">👤</span>
+
+      <button class="nav-pill-btn" data-nav="profile">
+        <div class="nav-icon-wrapper">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z"/>
+          </svg>
+        </div>
         <span>Profile</span>
       </button>
     </nav>
 
   </div>
 
-  <!-- Scripts -->
+  <!-- Game Scripts -->
   <script src="js/audio.js"></script>
+  <script src="js/arrow-path-generator.js"></script>
+  <script src="js/arrow-path-engine.js"></script>
   <script src="js/puzzle-generator.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/engine.js"></script>
