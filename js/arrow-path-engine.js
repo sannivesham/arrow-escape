@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ARROUT - Bending Path Arrow Engine
  * Fully responsive SVG coordinate system with integrated dotted grid
  */
@@ -130,16 +130,16 @@ class BendingArrowEngine {
     headPolygon.setAttribute('class', 'arrow-head');
     headPolygon.setAttribute('fill', '#152642');
 
-    const size = 11;
+    const size = 9;
     let pointsStr = '';
     if (arrow.dir === 'UP') {
-      pointsStr = `${headPx.x},${headPx.y - size} ${headPx.x - size * 0.75},${headPx.y + size * 0.4} ${headPx.x + size * 0.75},${headPx.y + size * 0.4}`;
+      pointsStr = `${headPx.x},${headPx.y - size} ${headPx.x - size * 0.72},${headPx.y + 2} ${headPx.x + size * 0.72},${headPx.y + 2}`;
     } else if (arrow.dir === 'DOWN') {
-      pointsStr = `${headPx.x},${headPx.y + size} ${headPx.x - size * 0.75},${headPx.y - size * 0.4} ${headPx.x + size * 0.75},${headPx.y - size * 0.4}`;
+      pointsStr = `${headPx.x},${headPx.y + size} ${headPx.x - size * 0.72},${headPx.y - 2} ${headPx.x + size * 0.72},${headPx.y - 2}`;
     } else if (arrow.dir === 'LEFT') {
-      pointsStr = `${headPx.x - size},${headPx.y} ${headPx.x + size * 0.4},${headPx.y - size * 0.75} ${headPx.x + size * 0.4},${headPx.y + size * 0.75}`;
+      pointsStr = `${headPx.x - size},${headPx.y} ${headPx.x + 2},${headPx.y - size * 0.72} ${headPx.x + 2},${headPx.y + size * 0.72}`;
     } else if (arrow.dir === 'RIGHT') {
-      pointsStr = `${headPx.x + size},${headPx.y} ${headPx.x - size * 0.4},${headPx.y - size * 0.75} ${headPx.x - size * 0.4},${headPx.y + size * 0.75}`;
+      pointsStr = `${headPx.x + size},${headPx.y} ${headPx.x - 2},${headPx.y - size * 0.72} ${headPx.x - 2},${headPx.y + size * 0.72}`;
     }
     headPolygon.setAttribute('points', pointsStr);
     g.appendChild(headPolygon);

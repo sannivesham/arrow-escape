@@ -476,8 +476,10 @@ body {
 .hearts-container {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 1.25rem;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1.35rem;
+  min-width: 110px;
 }
 
 .heart-full { color: #F87171; filter: drop-shadow(0 2px 4px rgba(248, 113, 113, 0.3)); }
@@ -776,20 +778,21 @@ body {
 
 .global-toast {
   position: absolute;
-  top: 76px;
+  bottom: 84px;
   left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  background: #152642;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(21, 38, 66, 0.95);
   color: #FFF;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border-radius: 24px;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(21, 38, 66, 0.3);
+  box-shadow: 0 10px 25px rgba(21, 38, 66, 0.35);
   opacity: 0;
   pointer-events: none;
-  transition: all 0.25s ease-out;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 120;
+  white-space: nowrap;
 }
 
 .global-toast.visible {
