@@ -115,6 +115,11 @@ class BendingArrowEngine {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', pathD);
     path.setAttribute('class', 'arrow-path');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#152642');
+    path.setAttribute('stroke-width', '5');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
     g.appendChild(path);
 
     // Arrowhead Polygon
@@ -123,6 +128,7 @@ class BendingArrowEngine {
 
     const headPolygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     headPolygon.setAttribute('class', 'arrow-head');
+    headPolygon.setAttribute('fill', '#152642');
 
     const size = 11;
     let pointsStr = '';
@@ -236,9 +242,17 @@ class BendingArrowEngine {
       arrow.element.classList.remove('blocked');
       void arrow.element.offsetWidth;
       arrow.element.classList.add('blocked');
+      const p = arrow.element.querySelector('.arrow-path');
+      const h = arrow.element.querySelector('.arrow-head');
+      if (p) p.setAttribute('stroke', '#F87171');
+      if (h) h.setAttribute('fill', '#F87171');
 
       setTimeout(() => {
-        arrow.element.classList.remove('blocked');
+        if (arrow.element) {
+          arrow.element.classList.remove('blocked');
+          if (p) p.setAttribute('stroke', '#152642');
+          if (h) h.setAttribute('fill', '#152642');
+        }
       }, 700);
     }
 
