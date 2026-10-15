@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ARROUT - Main Application Controller
  * Features full browser history hash-routing (prevents exiting site on back button)
  * and bending arrow test levels.
@@ -98,10 +98,14 @@ class ArroutApp {
     if (window.soundEngine) window.soundEngine.playClick();
     this.currentScreen = screenName;
 
-    // Header visibility toggle
+    // Header and Nav visibility toggle for puzzle gameplay
     const mainHeader = document.getElementById('main-app-header');
     if (mainHeader) {
       mainHeader.style.display = screenName === 'puzzle' ? 'none' : 'flex';
+    }
+    const bottomNav = document.querySelector('.floating-bottom-nav');
+    if (bottomNav) {
+      bottomNav.style.display = screenName === 'puzzle' ? 'none' : 'flex';
     }
 
     // Toggle active screen

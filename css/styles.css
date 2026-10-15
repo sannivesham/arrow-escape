@@ -402,6 +402,10 @@ body {
 /* ==========================================================================
    LEVEL PUZZLE SCREEN (Exact match to screenshot 2)
    ========================================================================== */
+#screen-puzzle {
+  padding-bottom: 24px;
+}
+
 .level-top-header {
   display: flex;
   align-items: center;
