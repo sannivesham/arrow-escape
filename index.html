@@ -1,0 +1,430 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Arrow Escape — The Ultimate Logic Puzzle Game</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+
+  <!-- Mobile Frame Container -->
+  <div class="mobile-app-frame">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="header-logo">⚡ ARROW ESCAPE</span>
+      </div>
+      <div class="header-right">
+        <div class="coin-pill">
+          <span>🪙</span>
+          <span class="user-coin-count">250</span>
+        </div>
+        <div class="avatar-thumbnail user-avatar-display" data-nav="profile">
+          🎯
+        </div>
+      </div>
+    </header>
+
+    <!-- Global Floating Toast Notification -->
+    <div id="global-toast" class="global-toast">Notification</div>
+
+    <!-- Screen Viewport -->
+    <main class="app-viewport">
+
+      <!-- ================= HOME SCREEN ================= -->
+      <section id="screen-home" class="app-screen active">
+        <div class="hero-banner">
+          <h1 class="hero-title">Arrow Escape</h1>
+          <p class="hero-subtitle">Clear the board without getting blocked. Can you find the way out?</p>
+          <button class="btn-play-hero" data-nav="levels">PLAY CAMPAIGN</button>
+        </div>
+
+        <div class="quick-modes-grid">
+          <div class="mode-card" data-nav="1v1">
+            <div class="mode-icon">⚔️</div>
+            <div class="mode-title">Online 1v1</div>
+            <div class="mode-desc">Duel live players on identical boards</div>
+          </div>
+          <div class="mode-card" data-nav="daily">
+            <div class="mode-icon">📅</div>
+            <div class="mode-title">Daily Challenge</div>
+            <div class="mode-desc">Special daily board + 50 coins reward</div>
+          </div>
+        </div>
+
+        <div class="tournament-banner-card" data-nav="tournament">
+          <div class="t-banner-left">
+            <span class="t-tag">WEEKLY EVENT</span>
+            <div class="t-title">Weekly Tournament</div>
+            <div class="t-sub">Complete 10 levels to qualify for the Championship!</div>
+          </div>
+          <div class="t-banner-right">
+            <span style="font-size: 2rem;">🏆</span>
+          </div>
+        </div>
+
+        <div class="quick-modes-grid">
+          <div class="mode-card" data-nav="shop">
+            <div class="mode-icon">🛍️</div>
+            <div class="mode-title">Cosmetics Shop</div>
+            <div class="mode-desc">Themes, arrow skins, avatars & frames</div>
+          </div>
+          <div class="mode-card" data-nav="profile">
+            <div class="mode-icon">👤</div>
+            <div class="mode-title">Player Profile</div>
+            <div class="mode-desc">Achievements, stats & leaderboard rank</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= LEVEL SELECT SCREEN ================= -->
+      <section id="screen-levels" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back">←</button>
+          <h2 class="screen-title">Campaign Levels</h2>
+          <div style="width: 36px;"></div>
+        </div>
+
+        <div class="diff-filter-bar">
+          <button class="diff-pill active" data-diff="easy">EASY</button>
+          <button class="diff-pill" data-diff="medium">MEDIUM</button>
+          <button class="diff-pill" data-diff="hard">HARD</button>
+          <button class="diff-pill" data-diff="expert">EXPERT</button>
+        </div>
+
+        <div id="levels-grid-container" class="levels-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================= PUZZLE SCREEN ================= -->
+      <section id="screen-puzzle" class="app-screen">
+        <div class="puzzle-hud">
+          <div class="hud-left">
+            <span id="puzzle-mode-title" class="puzzle-mode-title">Level 1</span>
+            <span id="puzzle-mode-badge" class="puzzle-mode-badge">EASY</span>
+          </div>
+          <div class="hud-counter-pill">
+            <span>Remaining:</span>
+            <span id="hud-arrows-remaining">0</span>
+          </div>
+          <button class="btn-back" style="width: 32px; height: 32px; font-size: 0.9rem;">✕</button>
+        </div>
+
+        <!-- 1v1 Opponent Live Progress Header (Only visible in 1v1 mode) -->
+        <div id="pvp-live-hud" class="pvp-live-hud">
+          <div class="pvp-opp-header">
+            <span>Opponent: <b id="pvp-opp-name">Player</b></span>
+            <span id="pvp-opp-count">16 Left</span>
+          </div>
+          <div class="pvp-opp-bar-bg">
+            <div id="pvp-opp-progress-bar" class="pvp-opp-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- Board Viewport -->
+        <div class="board-viewport">
+          <div id="game-arrow-board" class="arrow-board theme-classic">
+            <!-- Dynamically populated cells and arrows -->
+          </div>
+        </div>
+
+        <!-- Powerups Bar -->
+        <div id="powerups-bar" class="powerups-bar">
+          <button id="btn-powerup-hint" class="powerup-btn">
+            <span>💡 Hint</span>
+            <span id="count-powerup-hint" class="powerup-badge">3</span>
+          </button>
+          <button id="btn-powerup-undo" class="powerup-btn">
+            <span>↩️ Undo</span>
+            <span id="count-powerup-undo" class="powerup-badge">3</span>
+          </button>
+          <button id="btn-powerup-safe" class="powerup-btn">
+            <span>🛡️ Safe</span>
+            <span id="count-powerup-safe" class="powerup-badge">2</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= 1v1 PVP SCREEN ================= -->
+      <section id="screen-1v1" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back">←</button>
+          <h2 class="screen-title">Online 1v1 Duel</h2>
+          <div style="width: 36px;"></div>
+        </div>
+
+        <div class="matchmaking-box">
+          <div id="matchmaking-radar" class="radar-spinner"></div>
+          <h3 id="matchmaking-status-text" style="margin-bottom: 8px;">Ready to Duel</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 24px;">
+            Compete on identical arrow puzzle boards in real-time. First player to clear all arrows wins rating MMR and bonus coins!
+          </p>
+
+          <button id="btn-start-matchmaking" class="btn-play-hero" style="width: 100%;">FIND OPPONENT</button>
+          <div id="matchmaking-actions" style="margin-top: 12px; display: none;">
+            <button id="btn-cancel-matchmaking" class="btn-shop-action" style="padding: 10px 20px;">Cancel Search</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= WEEKLY TOURNAMENT SCREEN ================= -->
+      <section id="screen-tournament" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back">←</button>
+          <h2 class="screen-title">Weekly Tournament</h2>
+          <div style="width: 36px;"></div>
+        </div>
+
+        <div class="tournament-card-main">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="font-weight: 800;">Championship Cup</h3>
+            <span style="font-size: 0.8rem; color: var(--accent-gold); font-weight: 700;">Ends in: <span id="tournament-time-remaining">--</span></span>
+          </div>
+
+          <!-- Legal & Platform Notice per Prompt Section 8 & 19 -->
+          <div class="legal-cash-disclaimer">
+            ⚖️ <b>Regulatory Notice:</b> The planned ₹100 cash prize is disabled pending legal verification under Indian law and Google Play policies. Compete for the verified Champion Trophy, 1,000 Coins, and Leaderboard glory!
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700;">
+              <span>Weekly Eligibility Requirement</span>
+              <span id="tournament-eligibility-count">0 / 10 Levels</span>
+            </div>
+            <div class="eligibility-meter-bg">
+              <div id="tournament-eligibility-fill" class="eligibility-meter-fill"></div>
+            </div>
+            <div id="tournament-locked-msg" style="font-size: 0.75rem; color: #f43f5e; margin-top: 4px;">
+              Complete 10 distinct campaign levels this week to unlock your entry!
+            </div>
+          </div>
+
+          <button id="btn-enter-tournament" class="btn-play-hero" style="width: 100%;" disabled>
+            ENTER TOURNAMENT PUZZLE
+          </button>
+        </div>
+
+        <h3 style="margin-bottom: 10px; font-size: 1rem;">Verified Leaderboard</h3>
+        <div id="tournament-leaderboard-rows" class="leaderboard-container">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================= CUSTOMIZATION SHOP ================= -->
+      <section id="screen-shop" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back">←</button>
+          <h2 class="screen-title">Customization Shop</h2>
+          <div class="coin-pill">
+            <span>🪙</span>
+            <span class="user-coin-count">250</span>
+          </div>
+        </div>
+
+        <div class="shop-tabs">
+          <button class="shop-tab active" data-cat="themes">Board Themes</button>
+          <button class="shop-tab" data-cat="skins">Arrow Skins</button>
+          <button class="shop-tab" data-cat="avatars">Avatars</button>
+          <button class="shop-tab" data-cat="frames">Profile Frames</button>
+          <button class="shop-tab" data-cat="effects">Victory Effects</button>
+        </div>
+
+        <div id="shop-items-container" class="shop-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================= PLAYER PROFILE ================= -->
+      <section id="screen-profile" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back">←</button>
+          <h2 class="screen-title">Player Profile</h2>
+          <button id="btn-settings-open" class="btn-back" data-nav="settings">⚙️</button>
+        </div>
+
+        <div class="profile-card-hero">
+          <div id="profile-avatar-large" class="profile-avatar-large">🎯</div>
+          <input id="profile-username-input" class="profile-name-edit" type="text" value="ArrowPilot" maxlength="16" title="Tap to edit username">
+          <div id="profile-player-id" class="profile-id-text">ID: AE-000000</div>
+        </div>
+
+        <div class="stats-grid-row">
+          <div class="stat-cell">
+            <div id="profile-stat-clears" class="val">0</div>
+            <div class="lbl">Levels Cleared</div>
+          </div>
+          <div class="stat-cell">
+            <div id="profile-stat-wins" class="val">0W-0L</div>
+            <div class="lbl">1v1 Record</div>
+          </div>
+          <div class="stat-cell">
+            <div id="profile-stat-winrate" class="val">0%</div>
+            <div class="lbl">Win Rate</div>
+          </div>
+          <div class="stat-cell">
+            <div id="profile-stat-rating" class="val">1200</div>
+            <div class="lbl">MMR Rating</div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 10px; font-size: 1rem;">Achievements & Trophies</h3>
+        <div id="profile-achievements-list" class="achievements-list">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================= DAILY CHALLENGE SCREEN ================= -->
+      <section id="screen-daily" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back">←</button>
+          <h2 class="screen-title">Daily Challenge</h2>
+          <div style="width: 36px;"></div>
+        </div>
+
+        <div class="hero-banner" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15));">
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">📅</div>
+          <h2 id="daily-challenge-date" class="hero-title">2026-10-15</h2>
+          <p class="hero-subtitle">Every day brings a unique deterministic puzzle! Solve today's challenge to earn 50 bonus coins and build your streak.</p>
+          <div style="margin-bottom: 16px; font-weight: 800; color: var(--accent-gold);">
+            🔥 Current Streak: <span id="daily-streak-count">0</span> Days
+          </div>
+          <button id="btn-play-daily" class="btn-play-hero" style="background: linear-gradient(135deg, #059669, #10b981);">
+            PLAY TODAY'S PUZZLE
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= SETTINGS SCREEN ================= -->
+      <section id="screen-settings" class="app-screen">
+        <div class="screen-header-bar">
+          <button class="btn-back">←</button>
+          <h2 class="screen-title">Settings</h2>
+          <div style="width: 36px;"></div>
+        </div>
+
+        <div class="matchmaking-box" style="align-items: stretch; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <div style="font-weight: 800;">Sound Effects</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Web Audio procedural synthesizer</div>
+            </div>
+            <input id="setting-sound-toggle" type="checkbox" checked style="width: 22px; height: 22px; accent-color: var(--accent-cyan);">
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <div style="font-weight: 800; margin-bottom: 6px;">Audio Volume</div>
+            <input id="setting-volume-slider" type="range" min="0" max="100" value="70" style="width: 100%; accent-color: var(--accent-cyan);">
+          </div>
+
+          <div style="margin-bottom: 24px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+            <b>About Arrow Escape:</b><br>
+            Version 1.0.0 (Web Edition)<br>
+            Multi-platform client with cloud sync, anti-farming wallet, and server-verified tournament timing.
+          </div>
+
+          <button id="btn-reset-data" class="btn-shop-action" style="background: #e11d48; color: #fff; padding: 12px;">
+            Reset Local Progress
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Synchronized 3-2-1 Countdown Overlay -->
+    <div id="countdown-overlay" class="countdown-overlay">
+      <div id="countdown-text" class="countdown-text">3</div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="modal-victory" class="app-modal">
+      <div class="modal-content-card">
+        <div style="font-size: 2.8rem; margin-bottom: 6px;">🎉</div>
+        <h2 id="victory-title" class="modal-title">Level Cleared!</h2>
+        <div class="modal-stats-box">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">TIME</div>
+            <div id="victory-stat-time" style="font-weight: 800; font-size: 1.1rem;">0s</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">MOVES</div>
+            <div id="victory-stat-moves" style="font-weight: 800; font-size: 1.1rem;">0</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">REWARD</div>
+            <div id="victory-stat-coins" style="font-weight: 800; font-size: 1.1rem; color: var(--accent-gold);">+10 Coins</div>
+          </div>
+        </div>
+        <button id="btn-victory-next" class="btn-primary-action">CONTINUE</button>
+      </div>
+    </div>
+
+    <!-- 1v1 Result Modal -->
+    <div id="modal-1v1-result" class="app-modal">
+      <div class="modal-content-card">
+        <h2 id="pvp-result-title" class="modal-title">VICTORY!</h2>
+        <p id="pvp-result-subtitle" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;"></p>
+        <div class="modal-stats-box">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">RATING</div>
+            <div id="pvp-rating-change" style="font-weight: 800; font-size: 1rem;">+32 MMR</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">REWARD</div>
+            <div id="pvp-coins-earned" style="font-weight: 800; font-size: 1rem; color: var(--accent-gold);">+30 Coins</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="btn-pvp-rematch" class="btn-primary-action">PLAY AGAIN</button>
+          <button id="btn-pvp-home" class="btn-shop-action" style="padding: 12px 18px;">HOME</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confetti Particle Container -->
+    <div id="confetti-canvas-wrapper" class="confetti-container"></div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-nav="home">
+        <span class="tab-icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-tab" data-nav="levels">
+        <span class="tab-icon">🎯</span>
+        <span>Campaign</span>
+      </button>
+      <button class="nav-tab" data-nav="1v1">
+        <span class="tab-icon">⚔️</span>
+        <span>1v1 Duel</span>
+      </button>
+      <button class="nav-tab" data-nav="tournament">
+        <span class="tab-icon">🏆</span>
+        <span>Tournament</span>
+      </button>
+      <button class="nav-tab" data-nav="shop">
+        <span class="tab-icon">🛍️</span>
+        <span>Shop</span>
+      </button>
+      <button class="nav-tab" data-nav="profile">
+        <span class="tab-icon">👤</span>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/puzzle-generator.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/multiplayer.js"></script>
+  <script src="js/tournament.js"></script>
+  <script src="js/shop.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
