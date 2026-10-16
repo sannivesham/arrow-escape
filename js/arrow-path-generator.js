@@ -73,25 +73,40 @@ class BendingPuzzleGenerator {
   }
 
   static generateLevel(levelNum = 1, difficulty = 'normal') {
-    const cols = 11;
-    const rows = 15;
-    const shapeType = this.getShapeTypeForLevel(Number(levelNum));
-    const shapeName = shapeType.charAt(0).toUpperCase() + shapeType.slice(1);
+    const num = Math.max(1, Number(levelNum) || 1);
 
-    // Target arrow count scales progressively with level number
-    let targetCount = 10;
-    if (levelNum === 1) targetCount = 10; // Diamond Starter
-    else if (levelNum === 2) targetCount = 12; // Heart
-    else if (levelNum === 3) targetCount = 14; // Circle
-    else if (levelNum === 4) targetCount = 16; // Triangle
-    else if (levelNum === 5) targetCount = 20; // Hexagon
-    else if (levelNum === 6) targetCount = 22; // Zigzag
-    else {
-      targetCount = Math.min(32, 14 + Math.floor(levelNum * 1.2));
+    // Prioritize 100 verified shape levels from arrout_100_levels.json
+    if (window.ARROUT_LEVELS_100 && window.ARROUT_LEVELS_100[num - 1]) {
+      const lvl = window.ARROUT_LEVELS_100[num - 1];
+      return {
+        level: lvl.level,
+        difficulty: lvl.difficulty,
+        shapeType: lvl.shape,
+        shapeName: lvl.shapeName,
+        icon: lvl.icon,
+        cols: lvl.cols,
+        rows: lvl.rows,
+        arrowCount: lvl.arrowCount,
+        occupiedCellCount: lvl.occupiedCellCount,
+        solutionOrder: lvl.solutionOrder,
+        arrows: lvl.arrows.map(a => ({
+          id: a.id,
+          points: a.points.map(p => ({ x: p.x, y: p.y })),
+          dir: a.dir,
+          length: a.length,
+          folds: a.folds
+        }))
+      };
     }
 
+    const cols = 11;
+    const rows = 15;
+    const shapeType = this.getShapeTypeForLevel(num);
+    const shapeName = shapeType.charAt(0).toUpperCase() + shapeType.slice(1);
+
+    let targetCount = Math.min(32, 10 + Math.floor(num * 0.8));
     const mask = this.getShapeMask(shapeType, cols, rows);
-    const puzzle = this.buildGuaranteedShapePuzzle(shapeType, mask, levelNum, targetCount, cols, rows, difficulty);
+    const puzzle = this.buildGuaranteedShapePuzzle(shapeType, mask, num, targetCount, cols, rows, difficulty);
     puzzle.shapeName = shapeName;
     return puzzle;
   }

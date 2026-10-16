@@ -7,9 +7,9 @@
 class ArroutApp {
   constructor() {
     this.currentScreen = 'home';
-    this.currentLevelNum = 36;
+    this.currentLevelNum = 1;
     this.bendingEngine = null;
-    this.activeDifficulty = 'normal';
+    this.activeDifficulty = 'all';
 
     this.init();
   }
@@ -231,16 +231,16 @@ class ArroutApp {
 
   // --- Bending Arrow Level Launcher (Matches Screenshot 2) ---
   launchBendingLevel(levelNum, difficulty = 'normal') {
-    this.currentLevelNum = levelNum;
+    this.currentLevelNum = Number(levelNum) || 1;
 
     // Header text
     const titleEl = document.getElementById('puzzle-level-title');
-    const puzzleData = window.BendingPuzzleGenerator.generateLevel(levelNum, difficulty);
+    const puzzleData = window.BendingPuzzleGenerator.generateLevel(this.currentLevelNum, difficulty);
     const shapeLabel = puzzleData.shapeName ? ` · ${puzzleData.shapeName}` : '';
-    if (titleEl) titleEl.textContent = `Level ${levelNum}${shapeLabel}`;
+    if (titleEl) titleEl.textContent = `Level ${this.currentLevelNum}${shapeLabel}`;
 
     const diffBadge = document.getElementById('level-diff-badge');
-    if (diffBadge) diffBadge.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+    if (diffBadge) diffBadge.textContent = (puzzleData.difficulty || difficulty).toUpperCase();
 
     const boardContainer = document.getElementById('game-bending-board');
     if (!boardContainer) return;
@@ -269,15 +269,20 @@ class ArroutApp {
         this.showToast('Obstacle in front! Path is blocked.');
       },
       onComplete: (stats) => {
-        const res = window.storageManager?.recordLevelCompletion(`LVL-${levelNum}`, difficulty, stats.totalTime) || { earnedCoins: 10 };
+        const res = window.storageManager?.recordLevelCompletion(`LVL-${this.currentLevelNum}`, difficulty, stats.totalTime) || { earnedCoins: 10 };
         this.showVictoryModal({
-          title: `Level ${levelNum} (${puzzleData.shapeName}) Cleared!`,
+          title: `Level ${this.currentLevelNum} (${puzzleData.shapeName}) Cleared!`,
           time: `${stats.totalTime}s`,
           moves: stats.moves,
           earnedCoins: res.earnedCoins || 10,
           nextAction: () => {
-            const nextLvl = Number(levelNum) + 1;
-            this.navigate('puzzle', nextLvl);
+            const nextLvl = Number(this.currentLevelNum) + 1;
+            if (nextLvl <= 100) {
+              this.navigate('puzzle', nextLvl);
+            } else {
+              this.showToast('🏆 Master Champion! You cleared all 100 levels!');
+              this.navigate('levels');
+            }
           }
         });
       }
@@ -306,42 +311,57 @@ class ArroutApp {
     this.updateHUD();
   }
 
-  // --- Level Selection Screen (Shape-Based Levels) ---
+  // --- Level Selection Screen (All 100 Verified Shape Levels) ---
   renderLevelGrid() {
     const grid = document.getElementById('levels-grid-container');
     if (!grid) return;
     grid.innerHTML = '';
 
-    const shapeLevels = [
-      { num: 1, name: 'Level 1', shape: 'Diamond', icon: '💎', desc: '10 Arrows · Starter', tag: 'EASY' },
-      { num: 2, name: 'Level 2', shape: 'Heart', icon: '💖', desc: '12 Arrows · Curve Lobes', tag: 'EASY' },
-      { num: 3, name: 'Level 3', shape: 'Circle', icon: '🔵', desc: '14 Arrows · Radial Folds', tag: 'NORMAL' },
-      { num: 4, name: 'Level 4', shape: 'Triangle', icon: '🔺', desc: '16 Arrows · Pyramid Maze', tag: 'NORMAL' },
-      { num: 5, name: 'Level 5', shape: 'Hexagon', icon: '⬡', desc: '20 Arrows · Dense Honeycomb', tag: 'HARD' },
-      { num: 6, name: 'Level 6', shape: 'Zigzag', icon: '⚡', desc: '22 Arrows · Lightning Bends', tag: 'HARD' },
-      { num: 7, name: 'Level 7', shape: 'Hourglass', icon: '⌛', desc: '22 Arrows · Converging Waist', tag: 'EXPERT' },
-      { num: 8, name: 'Level 8', shape: 'Star', icon: '⭐', desc: '24 Arrows · 5-Point Geometry', tag: 'EXPERT' }
-    ];
+    const allLevels = window.ARROUT_LEVELS_100 || [];
+    const filter = (this.activeDifficulty || 'all').toLowerCase();
 
-    shapeLevels.forEach(lvl => {
+    const filtered = allLevels.filter(lvl => {
+      if (filter === 'all') return true;
+      const d = (lvl.difficulty || '').toLowerCase();
+      if (filter === 'medium' || filter === 'normal') return d === 'normal' || d === 'medium';
+      return d === filter;
+    });
+
+    const clearedLevels = window.storageManager?.data?.clearedLevels || {};
+
+    filtered.forEach(lvl => {
+      const isCleared = !!clearedLevels[`LVL-${lvl.level}`];
       const card = document.createElement('div');
-      card.className = 'level-clay-card cleared';
+      card.className = `level-clay-card ${isCleared ? 'cleared' : ''}`;
       card.style.aspectRatio = 'auto';
-      card.style.padding = '16px 14px';
+      card.style.padding = '14px 12px';
+      card.style.cursor = 'pointer';
+
+      const diffLower = (lvl.difficulty || 'Easy').toLowerCase();
+      const tagColor = diffLower === 'easy' ? '#10B981'
+        : (diffLower === 'normal' || diffLower === 'medium') ? '#6C5CE7'
+        : diffLower === 'hard' ? '#F59E0B'
+        : '#EF4444';
+
+      const tagBg = diffLower === 'easy' ? '#D1FAE5'
+        : (diffLower === 'normal' || diffLower === 'medium') ? '#ECE8FD'
+        : diffLower === 'hard' ? '#FEF3C7'
+        : '#FEE2E2';
+
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 4px;">
           <div style="display: flex; align-items: center; gap: 6px;">
-            <span style="font-size: 1.15rem;">${lvl.icon}</span>
-            <div class="lvl-card-num">${lvl.num}</div>
+            <span style="font-size: 1.15rem;">${lvl.icon || '🎯'}</span>
+            <div class="lvl-card-num">${lvl.level}</div>
           </div>
-          <span style="font-size: 0.65rem; font-weight: 800; background: #ECE8FD; color: #6C5CE7; padding: 2px 8px; border-radius: 8px;">${lvl.tag}</span>
+          <span style="font-size: 0.65rem; font-weight: 800; background: ${tagBg}; color: ${tagColor}; padding: 2px 8px; border-radius: 8px;">${lvl.difficulty.toUpperCase()}</span>
         </div>
-        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-navy); text-align: left; width: 100%; margin-top: 2px;">${lvl.shape}</div>
-        <div style="font-size: 0.72rem; color: var(--text-muted); text-align: left; width: 100%;">${lvl.desc}</div>
-        <div class="lvl-card-stars" style="margin-top: 6px; width: 100%; text-align: left;">⭐⭐⭐</div>
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-navy); text-align: left; width: 100%; margin-top: 2px;">${lvl.shapeName}</div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); text-align: left; width: 100%;">${lvl.arrowCount} Arrows · ${lvl.occupiedCellCount} Cells</div>
+        <div class="lvl-card-stars" style="margin-top: 6px; width: 100%; text-align: left;">${isCleared ? '⭐⭐⭐' : '☆☆☆'}</div>
       `;
       card.onclick = () => {
-        this.navigate('puzzle', lvl.num);
+        this.navigate('puzzle', lvl.level);
       };
       grid.appendChild(card);
     });

@@ -66,13 +66,21 @@ class BendingArrowEngine {
 
     const viewW = 400;
     const viewH = 560;
-    const padX = 26;
-    const padY = 26;
+    const padMinX = 22;
+    const padMinY = 22;
 
-    this.cellW = (viewW - padX * 2) / (this.cols - 1);
-    this.cellH = (viewH - padY * 2) / (this.rows - 1);
-    this.padX = padX;
-    this.padY = padY;
+    const maxSpanX = viewW - padMinX * 2;
+    const maxSpanY = viewH - padMinY * 2;
+
+    const cellStep = Math.min(
+      maxSpanX / Math.max(1, this.cols - 1),
+      maxSpanY / Math.max(1, this.rows - 1)
+    );
+
+    this.cellW = cellStep;
+    this.cellH = cellStep;
+    this.padX = (viewW - cellStep * (this.cols - 1)) / 2;
+    this.padY = (viewH - cellStep * (this.rows - 1)) / 2;
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'board-svg-canvas');
@@ -92,11 +100,10 @@ class BendingArrowEngine {
     dotsGroup.setAttribute('class', 'svg-grid-dots');
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
-        // If shapeMask is provided, highlight dots belonging to the shape silhouette
         const inShape = !this.shapeMask || this.shapeMask(c, r);
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', padX + c * this.cellW);
-        circle.setAttribute('cy', padY + r * this.cellH);
+        circle.setAttribute('cx', this.padX + c * this.cellW);
+        circle.setAttribute('cy', this.padY + r * this.cellH);
         circle.setAttribute('r', inShape ? '2.2' : '1.2');
         circle.setAttribute('fill', inShape ? '#CBD5E1' : '#E2E8F0');
         circle.setAttribute('opacity', inShape ? '0.9' : '0.25');
@@ -105,9 +112,13 @@ class BendingArrowEngine {
     }
     svg.appendChild(dotsGroup);
 
+    // Dynamic stroke and head size proportional to grid density
+    this.strokeWidth = Math.max(3.8, Math.min(5.5, this.cellW * 0.18));
+    this.arrowHeadSize = Math.max(6.5, Math.min(10, this.cellW * 0.38));
+
     // Draw Arrow Groups
     this.arrows.forEach(arrow => {
-      const g = this.createArrowSVGGroup(arrow, padX, padY, this.cellW, this.cellH);
+      const g = this.createArrowSVGGroup(arrow, this.padX, this.padY, this.cellW, this.cellH);
       arrow.element = g;
       svg.appendChild(g);
     });
@@ -143,35 +154,22 @@ class BendingArrowEngine {
     path.setAttribute('class', 'arrow-path');
     path.setAttribute('fill', 'none');
     path.setAttribute('stroke', '#152642');
-    path.setAttribute('stroke-width', '5');
+    path.setAttribute('stroke-width', (this.strokeWidth || 5).toFixed(1));
     path.setAttribute('stroke-linecap', 'round');
     path.setAttribute('stroke-linejoin', 'round');
     g.appendChild(path);
 
     // Arrowhead Polygon
     const headPt = arrow.points[arrow.points.length - 1];
-    const prevPt = arrow.points.length >= 2 ? arrow.points[arrow.points.length - 2] : headPt;
     const headPx = this.getPixelPos(headPt.x, headPt.y, padX, padY, stepX, stepY);
-    const prevPx = this.getPixelPos(prevPt.x, prevPt.y, padX, padY, stepX, stepY);
 
     const headPolygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     headPolygon.setAttribute('class', 'arrow-head');
     headPolygon.setAttribute('fill', '#152642');
 
-    // Direction vector of the arrowhead
-    let dx = headPx.x - prevPx.x;
-    let dy = headPx.y - prevPx.y;
-    const len = Math.hypot(dx, dy);
-    if (len > 0) {
-      dx /= len;
-      dy /= len;
-    } else {
-      const v = this.getDirVector(arrow.dir);
-      dx = v.dx;
-      dy = v.dy;
-    }
-
-    headPolygon.setAttribute('points', this.computeArrowheadPoints(headPx, { dx, dy }));
+    // Direction vector of the arrowhead directly corresponds to exit arrow.dir
+    const { dx, dy } = this.getDirVector(arrow.dir);
+    headPolygon.setAttribute('points', this.computeArrowheadPoints(headPx, { dx, dy }, this.arrowHeadSize || 9));
     g.appendChild(headPolygon);
 
     // Click/Touch Listener
@@ -218,43 +216,23 @@ class BendingArrowEngine {
     for (const [otherId, otherArrow] of this.arrows.entries()) {
       if (otherId === arrowId) continue;
 
-      for (let i = 0; i < otherArrow.points.length - 1; i++) {
-        const p1 = otherArrow.points[i];
-        const p2 = otherArrow.points[i + 1];
-
-        if (this.rayIntersectsSegment(head, dx, dy, p1, p2)) {
+      for (const pt of otherArrow.points) {
+        if (dx === 0 && dy < 0 && pt.x === head.x && pt.y < head.y) {
+          return { blocked: true, blockerId: otherId };
+        }
+        if (dx === 0 && dy > 0 && pt.x === head.x && pt.y > head.y) {
+          return { blocked: true, blockerId: otherId };
+        }
+        if (dx < 0 && dy === 0 && pt.y === head.y && pt.x < head.x) {
+          return { blocked: true, blockerId: otherId };
+        }
+        if (dx > 0 && dy === 0 && pt.y === head.y && pt.x > head.x) {
           return { blocked: true, blockerId: otherId };
         }
       }
     }
 
     return { blocked: false };
-  }
-
-  rayIntersectsSegment(head, dx, dy, p1, p2) {
-    const minX = Math.min(p1.x, p2.x);
-    const maxX = Math.max(p1.x, p2.x);
-    const minY = Math.min(p1.y, p2.y);
-    const maxY = Math.max(p1.y, p2.y);
-
-    const isHoriz = p1.y === p2.y;
-    const isVert = p1.x === p2.x;
-
-    if (dx === 0 && dy < 0) { // UP
-      if (isHoriz && head.x >= minX && head.x <= maxX && head.y > p1.y) return true;
-      if (isVert && head.x === p1.x && head.y > minY) return true;
-    } else if (dx === 0 && dy > 0) { // DOWN
-      if (isHoriz && head.x >= minX && head.x <= maxX && head.y < p1.y) return true;
-      if (isVert && head.x === p1.x && head.y < maxY) return true;
-    } else if (dx < 0 && dy === 0) { // LEFT
-      if (isVert && head.y >= minY && head.y <= maxY && head.x > p1.x) return true;
-      if (isHoriz && head.y === p1.y && head.x > minX) return true;
-    } else if (dx > 0 && dy === 0) { // RIGHT
-      if (isVert && head.y >= minY && head.y <= maxY && head.x < p1.x) return true;
-      if (isHoriz && head.y === p1.y && head.x < maxX) return true;
-    }
-
-    return false;
   }
 
   handleArrowTap(arrowId) {
@@ -367,6 +345,9 @@ class BendingArrowEngine {
       const p1 = this.getPixelPos(arrow.points[i].x, arrow.points[i].y);
       const p2 = this.getPixelPos(arrow.points[i+1].x, arrow.points[i+1].y);
       arrowLen += Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    }
+    if (arrowLen === 0) {
+      arrowLen = Math.max(12, (this.cellW || 24) * 0.45);
     }
 
     const duration = 460; // ms
