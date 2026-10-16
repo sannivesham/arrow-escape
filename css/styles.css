@@ -518,11 +518,15 @@ body {
   display: block;
 }
 
+.svg-grid-dots circle {
+  transition: opacity 0.3s ease, fill 0.3s ease;
+}
+
 /* Arrow Path Styling - Crisp Thick Strokes */
 .arrow-path {
   fill: none !important;
   stroke: var(--arrow-navy) !important;
-  stroke-width: 5 !important;
+  stroke-width: 5.5 !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
   cursor: pointer;

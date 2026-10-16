@@ -235,16 +235,15 @@ class ArroutApp {
 
     // Header text
     const titleEl = document.getElementById('puzzle-level-title');
-    if (titleEl) titleEl.textContent = `Level ${levelNum}`;
+    const puzzleData = window.BendingPuzzleGenerator.generateLevel(levelNum, difficulty);
+    const shapeLabel = puzzleData.shapeName ? ` · ${puzzleData.shapeName}` : '';
+    if (titleEl) titleEl.textContent = `Level ${levelNum}${shapeLabel}`;
 
     const diffBadge = document.getElementById('level-diff-badge');
     if (diffBadge) diffBadge.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
 
     const boardContainer = document.getElementById('game-bending-board');
     if (!boardContainer) return;
-
-    // Generate puzzle data
-    const puzzleData = window.BendingPuzzleGenerator.generateLevel(levelNum, difficulty);
 
     // Initialize engine
     this.bendingEngine = new BendingArrowEngine({
@@ -272,12 +271,12 @@ class ArroutApp {
       onComplete: (stats) => {
         const res = window.storageManager?.recordLevelCompletion(`LVL-${levelNum}`, difficulty, stats.totalTime) || { earnedCoins: 10 };
         this.showVictoryModal({
-          title: `Level ${levelNum} Cleared!`,
+          title: `Level ${levelNum} (${puzzleData.shapeName}) Cleared!`,
           time: `${stats.totalTime}s`,
           moves: stats.moves,
           earnedCoins: res.earnedCoins || 10,
           nextAction: () => {
-            const nextLvl = levelNum === 5 ? 36 : levelNum + 1;
+            const nextLvl = Number(levelNum) + 1;
             this.navigate('puzzle', nextLvl);
           }
         });
@@ -307,33 +306,38 @@ class ArroutApp {
     this.updateHUD();
   }
 
-  // --- Level Selection Screen (Testing Levels 1-5 + Level 36) ---
+  // --- Level Selection Screen (Shape-Based Levels) ---
   renderLevelGrid() {
     const grid = document.getElementById('levels-grid-container');
     if (!grid) return;
     grid.innerHTML = '';
 
-    // Test levels list
-    const testLevels = [
-      { num: 1, name: 'Level 1', desc: 'Starter (4 Arrows)', tag: 'EASY' },
-      { num: 2, name: 'Level 2', desc: 'Crossing (6 Arrows)', tag: 'EASY' },
-      { num: 3, name: 'Level 3', desc: 'L-Bends (10 Arrows)', tag: 'NORMAL' },
-      { num: 4, name: 'Level 4', desc: 'Maze (16 Arrows)', tag: 'NORMAL' },
-      { num: 5, name: 'Level 5', desc: 'Advanced (20 Arrows)', tag: 'HARD' },
-      { num: 36, name: 'Level 36', desc: 'Master Coils (26 Arrows)', tag: 'FEATURED' }
+    const shapeLevels = [
+      { num: 1, name: 'Level 1', shape: 'Diamond', icon: '💎', desc: '10 Arrows · Starter', tag: 'EASY' },
+      { num: 2, name: 'Level 2', shape: 'Heart', icon: '💖', desc: '12 Arrows · Curve Lobes', tag: 'EASY' },
+      { num: 3, name: 'Level 3', shape: 'Circle', icon: '🔵', desc: '14 Arrows · Radial Folds', tag: 'NORMAL' },
+      { num: 4, name: 'Level 4', shape: 'Triangle', icon: '🔺', desc: '16 Arrows · Pyramid Maze', tag: 'NORMAL' },
+      { num: 5, name: 'Level 5', shape: 'Hexagon', icon: '⬡', desc: '20 Arrows · Dense Honeycomb', tag: 'HARD' },
+      { num: 6, name: 'Level 6', shape: 'Zigzag', icon: '⚡', desc: '22 Arrows · Lightning Bends', tag: 'HARD' },
+      { num: 7, name: 'Level 7', shape: 'Hourglass', icon: '⌛', desc: '22 Arrows · Converging Waist', tag: 'EXPERT' },
+      { num: 8, name: 'Level 8', shape: 'Star', icon: '⭐', desc: '24 Arrows · 5-Point Geometry', tag: 'EXPERT' }
     ];
 
-    testLevels.forEach(lvl => {
+    shapeLevels.forEach(lvl => {
       const card = document.createElement('div');
       card.className = 'level-clay-card cleared';
       card.style.aspectRatio = 'auto';
       card.style.padding = '16px 14px';
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 4px;">
-          <div class="lvl-card-num">${lvl.num}</div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 1.15rem;">${lvl.icon}</span>
+            <div class="lvl-card-num">${lvl.num}</div>
+          </div>
           <span style="font-size: 0.65rem; font-weight: 800; background: #ECE8FD; color: #6C5CE7; padding: 2px 8px; border-radius: 8px;">${lvl.tag}</span>
         </div>
-        <div style="font-size: 0.75rem; color: var(--text-muted); text-align: left; width: 100%;">${lvl.desc}</div>
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-navy); text-align: left; width: 100%; margin-top: 2px;">${lvl.shape}</div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); text-align: left; width: 100%;">${lvl.desc}</div>
         <div class="lvl-card-stars" style="margin-top: 6px; width: 100%; text-align: left;">⭐⭐⭐</div>
       `;
       card.onclick = () => {

@@ -1,18 +1,25 @@
 /**
  * ARROUT - Bending Path Arrow Engine
- * Fully responsive SVG coordinate system with integrated dotted grid
+ * Supports:
+ * - Dotted grid with optional silhouette shape clipping/outline
+ * - True multi-segment path-following escape animation (arrows glide along their exact bends to exit the board!)
+ * - Precise raycast obstacle collision detection
+ * - Powerups (Hint pulse, Ruler undo)
  */
 
 class BendingArrowEngine {
   constructor(options = {}) {
     this.container = options.container;
-    this.cols = options.cols || 10;
-    this.rows = options.rows || 14;
+    this.cols = options.cols || 11;
+    this.rows = options.rows || 15;
     this.arrows = new Map();
+    this.shapeType = 'diamond';
+    this.shapeMask = null;
     this.hearts = 3;
     this.maxHearts = 3;
     this.isLocked = false;
     this.moveHistory = [];
+    this.activeAnimations = new Set();
     
     this.onEscape = options.onEscape || (() => {});
     this.onBlocked = options.onBlocked || (() => {});
@@ -22,8 +29,15 @@ class BendingArrowEngine {
   }
 
   loadPuzzle(puzzleData) {
-    this.cols = puzzleData.cols || 10;
-    this.rows = puzzleData.rows || 14;
+    // Cancel any active animation frame
+    this.activeAnimations.forEach(anim => cancelAnimationFrame(anim));
+    this.activeAnimations.clear();
+
+    this.cols = puzzleData.cols || 11;
+    this.rows = puzzleData.rows || 15;
+    this.shapeType = puzzleData.shapeType || 'rectangle';
+    this.shapeName = puzzleData.shapeName || 'Shape';
+    this.shapeMask = puzzleData.shapeMask || null;
     this.arrows.clear();
     this.hearts = 3;
     this.isLocked = false;
@@ -52,11 +66,13 @@ class BendingArrowEngine {
 
     const viewW = 400;
     const viewH = 560;
-    const padX = 28;
-    const padY = 28;
+    const padX = 26;
+    const padY = 26;
 
     this.cellW = (viewW - padX * 2) / (this.cols - 1);
     this.cellH = (viewH - padY * 2) / (this.rows - 1);
+    this.padX = padX;
+    this.padY = padY;
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'board-svg-canvas');
@@ -64,16 +80,26 @@ class BendingArrowEngine {
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     this.svg = svg;
 
-    // Draw integrated vector dots for 100% sharp alignment on all screens
+    // Optional: Draw faint shape boundary or subtle ambient silhouette
+    if (this.shapeMask && typeof this.shapeMask === 'function') {
+      const shapeBgGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      shapeBgGroup.setAttribute('class', 'shape-silhouette-bg');
+      svg.appendChild(shapeBgGroup);
+    }
+
+    // Draw vector grid dots matching reference
     const dotsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     dotsGroup.setAttribute('class', 'svg-grid-dots');
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
+        // If shapeMask is provided, highlight dots belonging to the shape silhouette
+        const inShape = !this.shapeMask || this.shapeMask(c, r);
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', padX + c * this.cellW);
         circle.setAttribute('cy', padY + r * this.cellH);
-        circle.setAttribute('r', '2.2');
-        circle.setAttribute('fill', '#CBD5E1');
+        circle.setAttribute('r', inShape ? '2.2' : '1.2');
+        circle.setAttribute('fill', inShape ? '#CBD5E1' : '#E2E8F0');
+        circle.setAttribute('opacity', inShape ? '0.9' : '0.25');
         dotsGroup.appendChild(circle);
       }
     }
@@ -89,7 +115,7 @@ class BendingArrowEngine {
     this.container.appendChild(svg);
   }
 
-  getPixelPos(gridX, gridY, padX, padY, stepX, stepY) {
+  getPixelPos(gridX, gridY, padX = this.padX, padY = this.padY, stepX = this.cellW, stepY = this.cellH) {
     return {
       x: padX + gridX * stepX,
       y: padY + gridY * stepY
@@ -124,24 +150,28 @@ class BendingArrowEngine {
 
     // Arrowhead Polygon
     const headPt = arrow.points[arrow.points.length - 1];
+    const prevPt = arrow.points.length >= 2 ? arrow.points[arrow.points.length - 2] : headPt;
     const headPx = this.getPixelPos(headPt.x, headPt.y, padX, padY, stepX, stepY);
+    const prevPx = this.getPixelPos(prevPt.x, prevPt.y, padX, padY, stepX, stepY);
 
     const headPolygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     headPolygon.setAttribute('class', 'arrow-head');
     headPolygon.setAttribute('fill', '#152642');
 
-    const size = 9;
-    let pointsStr = '';
-    if (arrow.dir === 'UP') {
-      pointsStr = `${headPx.x},${headPx.y - size} ${headPx.x - size * 0.72},${headPx.y + 2} ${headPx.x + size * 0.72},${headPx.y + 2}`;
-    } else if (arrow.dir === 'DOWN') {
-      pointsStr = `${headPx.x},${headPx.y + size} ${headPx.x - size * 0.72},${headPx.y - 2} ${headPx.x + size * 0.72},${headPx.y - 2}`;
-    } else if (arrow.dir === 'LEFT') {
-      pointsStr = `${headPx.x - size},${headPx.y} ${headPx.x + 2},${headPx.y - size * 0.72} ${headPx.x + 2},${headPx.y + size * 0.72}`;
-    } else if (arrow.dir === 'RIGHT') {
-      pointsStr = `${headPx.x + size},${headPx.y} ${headPx.x - 2},${headPx.y - size * 0.72} ${headPx.x - 2},${headPx.y + size * 0.72}`;
+    // Direction vector of the arrowhead
+    let dx = headPx.x - prevPx.x;
+    let dy = headPx.y - prevPx.y;
+    const len = Math.hypot(dx, dy);
+    if (len > 0) {
+      dx /= len;
+      dy /= len;
+    } else {
+      const v = this.getDirVector(arrow.dir);
+      dx = v.dx;
+      dy = v.dy;
     }
-    headPolygon.setAttribute('points', pointsStr);
+
+    headPolygon.setAttribute('points', this.computeArrowheadPoints(headPx, { dx, dy }));
     g.appendChild(headPolygon);
 
     // Click/Touch Listener
@@ -151,6 +181,21 @@ class BendingArrowEngine {
     });
 
     return g;
+  }
+
+  computeArrowheadPoints(headPx, dirVec, size = 9) {
+    const nx = -dirVec.dy;
+    const ny = dirVec.dx;
+
+    // Tip vertex at the forward point
+    const tip = { x: headPx.x, y: headPx.y };
+    // Base center
+    const bc = { x: headPx.x - dirVec.dx * size, y: headPx.y - dirVec.dy * size };
+    // Base wings
+    const b1 = { x: bc.x + nx * size * 0.72, y: bc.y + ny * size * 0.72 };
+    const b2 = { x: bc.x - nx * size * 0.72, y: bc.y - ny * size * 0.72 };
+
+    return `${tip.x},${tip.y} ${b1.x},${b1.y} ${b2.x},${b2.y}`;
   }
 
   getDirVector(dir) {
@@ -259,6 +304,11 @@ class BendingArrowEngine {
     this.onBlocked(arrow);
   }
 
+  /**
+   * Real Arrow Movement:
+   * The arrow follows its exact drawn path including all bends, then continues
+   * smoothly off the edge of the board in its forward direction!
+   */
   executeEscape(arrow) {
     if (window.soundEngine) window.soundEngine.playEscape();
 
@@ -266,17 +316,7 @@ class BendingArrowEngine {
     this.moveHistory.push(arrow);
 
     if (arrow.element) {
-      const { dx, dy } = this.getDirVector(arrow.dir);
-      const dist = 700;
-      arrow.element.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease-out';
-      arrow.element.style.transform = `translate(${dx * dist}px, ${dy * dist}px)`;
-      arrow.element.style.opacity = '0';
-
-      setTimeout(() => {
-        if (arrow.element && arrow.element.parentNode) {
-          arrow.element.parentNode.removeChild(arrow.element);
-        }
-      }, 420);
+      this.animateArrowAlongPath(arrow);
     }
 
     this.onCountChange(this.arrows.size);
@@ -288,8 +328,124 @@ class BendingArrowEngine {
       setTimeout(() => {
         if (window.soundEngine) window.soundEngine.playVictory();
         this.onComplete({ totalTime: elapsed, moves: this.moveHistory.length });
-      }, 450);
+      }, 650);
     }
+  }
+
+  animateArrowAlongPath(arrow) {
+    const el = arrow.element;
+    const pathEl = el.querySelector('.arrow-path');
+    const headEl = el.querySelector('.arrow-head');
+    if (!pathEl || !headEl) {
+      if (el.parentNode) el.parentNode.removeChild(el);
+      return;
+    }
+
+    // 1. Calculate extended forward path exiting the board
+    const headGrid = arrow.points[arrow.points.length - 1];
+    let exitGrid = { x: headGrid.x, y: headGrid.y };
+    if (arrow.dir === 'UP') exitGrid.y = -4;
+    else if (arrow.dir === 'DOWN') exitGrid.y = this.rows + 3;
+    else if (arrow.dir === 'LEFT') exitGrid.x = -4;
+    else if (arrow.dir === 'RIGHT') exitGrid.x = this.cols + 3;
+
+    const fullPolyGrid = [...arrow.points, exitGrid];
+    const fullPolyPx = fullPolyGrid.map(p => this.getPixelPos(p.x, p.y));
+
+    // Cumulative pixel distances
+    const cumDists = [0];
+    let totalLen = 0;
+    for (let i = 0; i < fullPolyPx.length - 1; i++) {
+      const d = Math.hypot(fullPolyPx[i+1].x - fullPolyPx[i].x, fullPolyPx[i+1].y - fullPolyPx[i].y);
+      totalLen += d;
+      cumDists.push(totalLen);
+    }
+
+    // Initial arrow length
+    let arrowLen = 0;
+    for (let i = 0; i < arrow.points.length - 1; i++) {
+      const p1 = this.getPixelPos(arrow.points[i].x, arrow.points[i].y);
+      const p2 = this.getPixelPos(arrow.points[i+1].x, arrow.points[i+1].y);
+      arrowLen += Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    }
+
+    const duration = 460; // ms
+    const startTime = performance.now();
+
+    const sampleAtDist = (dist) => {
+      if (dist <= 0) {
+        const p1 = fullPolyPx[0], p2 = fullPolyPx[1] || p1;
+        const segLen = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1;
+        return { pt: p1, dir: { dx: (p2.x - p1.x) / segLen, dy: (p2.y - p1.y) / segLen } };
+      }
+      for (let i = 0; i < fullPolyPx.length - 1; i++) {
+        if (cumDists[i+1] >= dist || i === fullPolyPx.length - 2) {
+          const segLen = cumDists[i+1] - cumDists[i];
+          const r = segLen === 0 ? 0 : Math.min(1, Math.max(0, (dist - cumDists[i]) / segLen));
+          const p1 = fullPolyPx[i], p2 = fullPolyPx[i+1];
+          const dirLen = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1;
+          return {
+            pt: { x: p1.x + (p2.x - p1.x) * r, y: p1.y + (p2.y - p1.y) * r },
+            dir: { dx: (p2.x - p1.x) / dirLen, dy: (p2.y - p1.y) / dirLen }
+          };
+        }
+      }
+      const last = fullPolyPx[fullPolyPx.length - 1];
+      const prev = fullPolyPx[fullPolyPx.length - 2] || last;
+      const dL = Math.hypot(last.x - prev.x, last.y - prev.y) || 1;
+      return { pt: last, dir: { dx: (last.x - prev.x) / dL, dy: (last.y - prev.y) / dL } };
+    };
+
+    const slicePoly = (dStart, dEnd) => {
+      const res = [];
+      const startInfo = sampleAtDist(dStart);
+      res.push(startInfo.pt);
+
+      for (let i = 0; i < fullPolyPx.length - 1; i++) {
+        const segEnd = cumDists[i+1];
+        if (segEnd > dStart && segEnd < dEnd && i + 1 < fullPolyPx.length) {
+          res.push(fullPolyPx[i+1]);
+        }
+      }
+
+      const endInfo = sampleAtDist(dEnd);
+      res.push(endInfo.pt);
+      return { points: res, headPt: endInfo.pt, headDir: endInfo.dir };
+    };
+
+    const animStep = (now) => {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / duration);
+      // Ease out cubic
+      const progress = 1 - Math.pow(1 - t, 3);
+
+      const dHead = arrowLen + (totalLen - arrowLen) * progress;
+      const dTail = (totalLen) * progress;
+
+      if (t >= 1) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+        this.activeAnimations.delete(animId);
+        return;
+      }
+
+      const slice = slicePoly(Math.min(dTail, dHead), dHead);
+
+      // Re-draw path d attribute
+      let dStr = '';
+      slice.points.forEach((p, idx) => {
+        dStr += (idx === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`);
+      });
+      pathEl.setAttribute('d', dStr);
+
+      // Update arrowhead at current moving head point
+      headEl.setAttribute('points', this.computeArrowheadPoints(slice.headPt, slice.headDir));
+
+      const animId = requestAnimationFrame(animStep);
+      this.activeAnimations.add(animId);
+    };
+
+    const animId = requestAnimationFrame(animStep);
+    this.activeAnimations.add(animId);
   }
 
   useHint() {
