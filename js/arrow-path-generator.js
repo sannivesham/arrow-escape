@@ -62,9 +62,36 @@ class BendingPuzzleGenerator {
         case 'star': {
           const r = Math.hypot(nx, ny);
           const angle = Math.atan2(ny, nx);
-          const starR = 0.5 + 0.35 * Math.cos(5 * angle);
+          const starR = 0.52 + 0.36 * Math.cos(5 * angle);
           return r <= starR;
         }
+
+        case 'shield':
+          return Math.abs(nx) <= 0.85 && (ny <= 0 ? ny >= -0.85 : (Math.abs(nx) <= 0.85 * (1 - Math.pow(ny, 2) * 0.75)));
+
+        case 'crown':
+          return (ny >= -0.2 && ny <= 0.8 && Math.abs(nx) <= 0.88) || (ny < -0.2 && (Math.abs(nx) <= 0.25 || (Math.abs(nx) >= 0.65 && Math.abs(nx) <= 0.88)));
+
+        case 'cross':
+          return (Math.abs(nx) <= 0.35 && Math.abs(ny) <= 0.88) || (Math.abs(ny) <= 0.35 && Math.abs(nx) <= 0.88);
+
+        case 'ring': {
+          const r2 = nx * nx + ny * ny;
+          return r2 <= 0.92 && r2 >= 0.18;
+        }
+
+        case 'arrow':
+        case 'arrowhead':
+          return (Math.abs(nx) <= (-ny + 0.2) * 0.8 && ny <= 0.2) || (Math.abs(nx) <= 0.32 && ny >= 0.2 && ny <= 0.88);
+
+        case 'clover': {
+          const r = Math.hypot(nx, ny);
+          const angle = Math.atan2(ny, nx);
+          return r <= 0.45 + 0.38 * Math.abs(Math.sin(2 * angle));
+        }
+
+        case 'octagon':
+          return Math.abs(nx) <= 0.88 && Math.abs(ny) <= 0.88 && (Math.abs(nx) + Math.abs(ny) <= 1.25);
 
         default:
           return true;

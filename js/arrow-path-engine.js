@@ -35,9 +35,9 @@ class BendingArrowEngine {
 
     this.cols = puzzleData.cols || 11;
     this.rows = puzzleData.rows || 15;
-    this.shapeType = puzzleData.shapeType || 'rectangle';
+    this.shapeType = puzzleData.shapeType || puzzleData.shape || 'diamond';
     this.shapeName = puzzleData.shapeName || 'Shape';
-    this.shapeMask = puzzleData.shapeMask || null;
+    this.shapeMask = puzzleData.shapeMask || (window.BendingPuzzleGenerator?.getShapeMask ? window.BendingPuzzleGenerator.getShapeMask(this.shapeType, this.cols, this.rows) : null);
     this.arrows.clear();
     this.hearts = 3;
     this.isLocked = false;
@@ -185,15 +185,21 @@ class BendingArrowEngine {
     const nx = -dirVec.dy;
     const ny = dirVec.dx;
 
-    // Tip vertex at the forward point
-    const tip = { x: headPx.x, y: headPx.y };
-    // Base center
-    const bc = { x: headPx.x - dirVec.dx * size, y: headPx.y - dirVec.dy * size };
+    // Tip vertex extends slightly beyond the line end
+    const tip = {
+      x: headPx.x + dirVec.dx * (size * 0.45),
+      y: headPx.y + dirVec.dy * (size * 0.45)
+    };
+    // Base center covers the line end
+    const bc = {
+      x: headPx.x - dirVec.dx * (size * 0.55),
+      y: headPx.y - dirVec.dy * (size * 0.55)
+    };
     // Base wings
-    const b1 = { x: bc.x + nx * size * 0.72, y: bc.y + ny * size * 0.72 };
-    const b2 = { x: bc.x - nx * size * 0.72, y: bc.y - ny * size * 0.72 };
+    const b1 = { x: bc.x + nx * size * 0.65, y: bc.y + ny * size * 0.65 };
+    const b2 = { x: bc.x - nx * size * 0.65, y: bc.y - ny * size * 0.65 };
 
-    return `${tip.x},${tip.y} ${b1.x},${b1.y} ${b2.x},${b2.y}`;
+    return `${tip.x.toFixed(1)},${tip.y.toFixed(1)} ${b1.x.toFixed(1)},${b1.y.toFixed(1)} ${b2.x.toFixed(1)},${b2.y.toFixed(1)}`;
   }
 
   getDirVector(dir) {
@@ -216,23 +222,51 @@ class BendingArrowEngine {
     for (const [otherId, otherArrow] of this.arrows.entries()) {
       if (otherId === arrowId) continue;
 
+      // 1. Check all vertices
       for (const pt of otherArrow.points) {
-        if (dx === 0 && dy < 0 && pt.x === head.x && pt.y < head.y) {
-          return { blocked: true, blockerId: otherId };
-        }
-        if (dx === 0 && dy > 0 && pt.x === head.x && pt.y > head.y) {
-          return { blocked: true, blockerId: otherId };
-        }
-        if (dx < 0 && dy === 0 && pt.y === head.y && pt.x < head.x) {
-          return { blocked: true, blockerId: otherId };
-        }
-        if (dx > 0 && dy === 0 && pt.y === head.y && pt.x > head.x) {
+        if (dx === 0 && dy < 0 && pt.x === head.x && pt.y < head.y) return { blocked: true, blockerId: otherId };
+        if (dx === 0 && dy > 0 && pt.x === head.x && pt.y > head.y) return { blocked: true, blockerId: otherId };
+        if (dx < 0 && dy === 0 && pt.y === head.y && pt.x < head.x) return { blocked: true, blockerId: otherId };
+        if (dx > 0 && dy === 0 && pt.y === head.y && pt.x > head.x) return { blocked: true, blockerId: otherId };
+      }
+
+      // 2. Check all segments
+      for (let i = 0; i < otherArrow.points.length - 1; i++) {
+        const p1 = otherArrow.points[i];
+        const p2 = otherArrow.points[i + 1];
+        if (this.rayIntersectsSegment(head, dx, dy, p1, p2)) {
           return { blocked: true, blockerId: otherId };
         }
       }
     }
 
     return { blocked: false };
+  }
+
+  rayIntersectsSegment(head, dx, dy, p1, p2) {
+    const minX = Math.min(p1.x, p2.x);
+    const maxX = Math.max(p1.x, p2.x);
+    const minY = Math.min(p1.y, p2.y);
+    const maxY = Math.max(p1.y, p2.y);
+
+    const isHoriz = p1.y === p2.y;
+    const isVert = p1.x === p2.x;
+
+    if (dx === 0 && dy < 0) { // UP
+      if (isHoriz && head.x >= minX && head.x <= maxX && head.y > p1.y) return true;
+      if (isVert && head.x === p1.x && head.y > minY) return true;
+    } else if (dx === 0 && dy > 0) { // DOWN
+      if (isHoriz && head.x >= minX && head.x <= maxX && head.y < p1.y) return true;
+      if (isVert && head.x === p1.x && head.y < maxY) return true;
+    } else if (dx < 0 && dy === 0) { // LEFT
+      if (isVert && head.y >= minY && head.y <= maxY && head.x > p1.x) return true;
+      if (isHoriz && head.y === p1.y && head.x > minX) return true;
+    } else if (dx > 0 && dy === 0) { // RIGHT
+      if (isVert && head.y >= minY && head.y <= maxY && head.x < p1.x) return true;
+      if (isHoriz && head.y === p1.y && head.x < maxX) return true;
+    }
+
+    return false;
   }
 
   handleArrowTap(arrowId) {
