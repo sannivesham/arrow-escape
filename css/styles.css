@@ -840,3 +840,116 @@ body.screen-home-active .app-viewport,
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* ==========================================================================
+   CINEMATIC INTRO SCREEN (From Arrout (5).html with Website Theme Colors)
+   ========================================================================== */
+#intro {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, var(--accent-purple-light), var(--bg-canvas) 70%);
+  z-index: 1000;
+  color: var(--text-navy);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.45s ease-out;
+}
+
+#gd {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-image: radial-gradient(#CBD5E1 1.6px, transparent 1.7px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(circle, #000, transparent 75%);
+  mask-image: radial-gradient(circle, #000, transparent 75%);
+  animation: gdi 1s forwards;
+  pointer-events: none;
+}
+
+@keyframes gdi {
+  to { opacity: 1; }
+}
+
+#bd {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#itl {
+  position: absolute;
+  top: calc(46% - 24px);
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  pointer-events: none;
+  animation: glow 1.4s 2.2s ease-in-out 2;
+}
+
+.lt {
+  display: inline-block;
+  opacity: 0;
+  background: linear-gradient(135deg, var(--text-navy) 0%, var(--accent-purple) 60%, #6C5CE7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: slin 0.6s var(--d) cubic-bezier(0.2, 1.2, 0.4, 1) both, wave 0.5s calc(var(--d) + 1.3s) ease-in-out;
+}
+
+@keyframes slin {
+  from {
+    opacity: 0;
+    transform: translate(var(--x), var(--y));
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+  50% { filter: drop-shadow(0 0 16px rgba(139, 133, 248, 0.45)); }
+}
+
+#tag {
+  position: absolute;
+  top: calc(46% + 64px);
+  width: 100%;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fin 0.6s 3.4s forwards;
+  pointer-events: none;
+}
+
+@keyframes fin {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
