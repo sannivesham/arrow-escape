@@ -119,6 +119,12 @@ class ArroutApp {
       this.currentScreen = 'home';
     }
 
+    const appFrame = document.querySelector('.mobile-app-frame');
+    if (appFrame) {
+      appFrame.classList.toggle('screen-home-active', this.currentScreen === 'home');
+    }
+    document.body.classList.toggle('screen-home-active', this.currentScreen === 'home');
+
     // Update bottom navigation bar active state
     document.querySelectorAll('.floating-bottom-nav .nav-pill-btn').forEach(btn => {
       if (btn.dataset.nav === screenName || (screenName === 'levels' && btn.dataset.nav === 'puzzle')) {
