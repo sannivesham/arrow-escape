@@ -16,6 +16,9 @@
       --text-navy: #152642;
       --text-muted: #64748B;
       --accent-purple: #8B85F8;
+      --accent-purple-light: #ECE8FD;
+      --accent-green: #10B981;
+      --accent-green-bg: #ECFDF5;
       --border-color: #E2E8F0;
     }
 
@@ -37,9 +40,9 @@
 
     .container {
       width: 100%;
-      max-width: 820px;
+      max-width: 840px;
       background: var(--card-bg);
-      padding: 48px 40px;
+      padding: 48px 42px;
       border-radius: 28px;
       box-shadow: 0 10px 30px rgba(160, 175, 200, 0.18);
       border: 1px solid var(--border-color);
@@ -48,29 +51,30 @@
     .header-block {
       border-bottom: 2px solid #F1F5F9;
       padding-bottom: 24px;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .brand-tag {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #ECE8FD;
+      background: var(--accent-purple-light);
       color: #6C5CE7;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 12px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 800;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       margin-bottom: 12px;
     }
 
     h1 {
       font-family: 'Playfair Display', Georgia, serif;
       color: var(--text-navy);
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       font-weight: 800;
       margin-bottom: 8px;
+      line-height: 1.2;
     }
 
     .date-meta {
@@ -79,18 +83,97 @@
       font-weight: 500;
     }
 
+    /* Key Disclosures Summary Card */
+    .summary-card {
+      background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 22px 24px;
+      margin-bottom: 32px;
+    }
+
+    .summary-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-navy);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .summary-item {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-navy);
+    }
+
+    .summary-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    /* Table of contents */
+    .toc-box {
+      background: #FAF8F5;
+      border: 1px dashed #CBD5E1;
+      border-radius: 18px;
+      padding: 18px 24px;
+      margin-bottom: 34px;
+    }
+
+    .toc-title {
+      font-weight: 800;
+      color: var(--text-navy);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 6px 16px;
+      margin-left: 0;
+    }
+
+    .toc-list a {
+      color: #6C5CE7;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .toc-list a:hover {
+      text-decoration: underline;
+    }
+
     h2 {
       font-family: 'Playfair Display', Georgia, serif;
       color: var(--text-navy);
-      font-size: 1.35rem;
-      margin-top: 32px;
+      font-size: 1.45rem;
+      margin-top: 36px;
       margin-bottom: 12px;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 6px;
     }
 
     h3 {
       color: var(--text-navy);
       font-size: 1.05rem;
-      margin-top: 18px;
+      margin-top: 20px;
       margin-bottom: 8px;
     }
 
@@ -106,9 +189,13 @@
     }
 
     li {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-size: 0.95rem;
       color: #334155;
+    }
+
+    strong {
+      color: var(--text-navy);
     }
 
     .contact-box {
@@ -116,7 +203,8 @@
       border: 1.5px solid #E2E8F0;
       border-radius: 18px;
       padding: 20px 24px;
-      margin-top: 20px;
+      margin-top: 16px;
+      margin-bottom: 24px;
     }
 
     .contact-box p {
@@ -135,16 +223,51 @@
       text-decoration: underline;
     }
 
+    .pill-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #152642;
+      color: #FFFFFF !important;
+      padding: 10px 20px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+
+    .pill-link-btn:hover {
+      background: #23385A;
+      text-decoration: none;
+    }
+
+    .badge-no-pay {
+      display: inline-block;
+      background: var(--accent-green-bg);
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
     @media (max-width: 640px) {
       body {
-        padding: 16px 12px;
+        padding: 16px 10px;
       }
       .container {
-        padding: 28px 20px;
+        padding: 28px 18px;
         border-radius: 20px;
       }
       h1 {
-        font-size: 1.75rem;
+        font-size: 1.85rem;
+      }
+      .summary-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -156,154 +279,232 @@
       <div class="brand-tag">ARROUT</div>
       <h1>Privacy Policy</h1>
       <div class="date-meta">
-        <strong>Effective date:</strong> 16 October 2026 &nbsp;|&nbsp; <strong>Last updated:</strong> 16 October 2026
+        <strong>Effective date:</strong> 16 October 2026 &nbsp;|&nbsp; <strong>Last updated:</strong> 18 October 2026
       </div>
     </div>
 
-    <h2>1. Introduction</h2>
-    <p>Welcome to ARROUT (“we,” “our,” or “us”). ARROUT is an arrow-based puzzle game that may include single-player levels, online multiplayer battles, leaderboards, tournaments, virtual coins, and in-game purchases.</p>
-    <p>This Privacy Policy explains how we collect, use, store, disclose, and protect information when you use ARROUT.</p>
-    <p>We are committed to protecting your privacy and handling your information responsibly. By using ARROUT, you acknowledge this policy.</p>
-    
-    <div class="contact-box" style="margin-bottom: 24px;">
-      <p>Developer: reshwanth</p>
-      <p>Contact email: <a href="mailto:web.sannivesham@gmail.com">web.sannivesham@gmail.com</a></p>
+    <!-- Quick Compliance Summary for Google Play & Users -->
+    <div class="summary-card">
+      <div class="summary-title">Summary of Key Data Practices</div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <span class="summary-icon">💎</span>
+          <span>100% Free to Play — No In-App Purchases</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-icon">🚫</span>
+          <span>Zero Sensitive Device Permissions Required</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-icon">🔒</span>
+          <span>Data Encrypted in Transit (HTTPS / TLS)</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-icon">🗑️</span>
+          <span>Dedicated Account & Data Deletion URL</span>
+        </div>
+      </div>
     </div>
 
-    <h2>2. Information We May Collect</h2>
-    <p>The information collected depends on the features you use and the services integrated into the game.</p>
+    <!-- Table of Contents -->
+    <div class="toc-box">
+      <div class="toc-title">Table of Contents</div>
+      <ul class="toc-list">
+        <li><a href="#sec-1">1. Introduction & Developer Identity</a></li>
+        <li><a href="#sec-2">2. Information We Collect</a></li>
+        <li><a href="#sec-3">3. No Payments or Financial Data</a></li>
+        <li><a href="#sec-4">4. Device Permissions (None Required)</a></li>
+        <li><a href="#sec-5">5. How We Use Information</a></li>
+        <li><a href="#sec-6">6. Multiplayer & Public Information</a></li>
+        <li><a href="#sec-7">7. Free In-Game Virtual Coins</a></li>
+        <li><a href="#sec-8">8. Advertising & Analytics</a></li>
+        <li><a href="#sec-9">9. How We Share Information</a></li>
+        <li><a href="#sec-10">10. Data Security</a></li>
+        <li><a href="#sec-11">11. Data Retention & Account Deletion</a></li>
+        <li><a href="#sec-12">12. Children's Privacy (Google Play Families)</a></li>
+        <li><a href="#sec-13">13. Your Privacy Rights (GDPR / CCPA)</a></li>
+        <li><a href="#sec-14">14. Changes to This Policy</a></li>
+        <li><a href="#sec-15">15. Contact Information</a></li>
+      </ul>
+    </div>
 
-    <h3>A. Account information</h3>
-    <p>If you create an account, we may collect:</p>
-    <ul>
-      <li>Username or display name.</li>
-      <li>Email address, if required for registration or account recovery.</li>
-      <li>Authentication identifiers provided by your sign-in provider.</li>
-      <li>Profile picture, if you choose to upload one.</li>
-      <li>Account settings and preferences.</li>
-    </ul>
+    <!-- 1. Introduction -->
+    <h2 id="sec-1">1. Introduction & Developer Identity</h2>
+    <p>Welcome to <strong>ARROUT</strong> (“we,” “our,” or “us”). ARROUT is an arrow-based puzzle game offering single-player levels, daily challenges, weekly tournaments, online 1v1 multiplayer duels, and free virtual coin rewards.</p>
+    <p>This Privacy Policy explains how we collect, use, store, disclose, and safeguard your information when you download, install, or play ARROUT on mobile devices (including via the Google Play Store) or access our web versions.</p>
+    <p>We are committed to handling your information transparently, ethically, and in full compliance with applicable privacy laws, including the <strong>Google Play Developer Distribution Agreement</strong>, <strong>Google Play Developer Program Policies (Data Safety & Families Policy)</strong>, the EU/UK General Data Protection Regulation (<strong>GDPR</strong>), and the California Consumer Privacy Act (<strong>CCPA/CPRA</strong>).</p>
 
-    <h3>B. Gameplay information</h3>
-    <p>We may collect:</p>
-    <ul>
-      <li>Levels played and completed.</li>
-      <li>Puzzle progress and achievements.</li>
-      <li>Scores, rankings, and tournament results.</li>
-      <li>Multiplayer match results and player statistics.</li>
-      <li>Virtual coin balances and transaction records.</li>
-      <li>In-game settings and preferences.</li>
-    </ul>
-    <p>This information helps save progress, operate multiplayer features, prevent cheating, and maintain fair leaderboards.</p>
-
-    <h3>C. Device and technical information</h3>
-    <p>Depending on the technologies used, we or our service providers may process:</p>
-    <ul>
-      <li>Device type, operating system, and app version.</li>
-      <li>Crash reports and diagnostic information.</li>
-      <li>App performance data.</li>
-      <li>IP address and basic network information.</li>
-      <li>App installation identifiers or other identifiers used for security, analytics, or advertising.</li>
-    </ul>
-
-    <h3>D. Purchases and payments</h3>
-    <p>If ARROUT offers paid items, we may receive information about purchases, such as product identifiers, purchase status, and transaction references.</p>
-    <p>Payments are handled by the applicable payment provider or app store. We do not collect or store complete payment card details unless a future feature explicitly requires it and appropriate safeguards are implemented.</p>
-
-    <h3>E. Information we do not intentionally require</h3>
-    <p>ARROUT does not need your contacts, microphone, camera, or precise location for its core arrow-puzzle gameplay. We will not access these features unless a future feature genuinely requires them, in which case we will provide the required disclosures and request permissions where applicable.</p>
-
-    <h2>3. How We Use Information</h2>
-    <p>We may use information to:</p>
-    <ul>
-      <li>Create and manage user accounts.</li>
-      <li>Save and restore game progress.</li>
-      <li>Operate online matches, tournaments, and leaderboards.</li>
-      <li>Maintain virtual coin balances and purchase records.</li>
-      <li>Provide customer support.</li>
-      <li>Detect cheating, fraud, abuse, and security threats.</li>
-      <li>Diagnose crashes and improve game performance.</li>
-      <li>Maintain and improve gameplay features.</li>
-      <li>Comply with applicable legal obligations.</li>
-    </ul>
-    <p>We will not use personal information for purposes incompatible with this policy without providing any disclosures or obtaining consent required by law.</p>
-
-    <h2>4. Online Multiplayer and Public Information</h2>
-    <p>If you participate in online battles, tournaments, or leaderboards, certain information may be visible to other players, including your chosen username, avatar, score, ranking, achievements, and match results.</p>
-    <p>Please avoid using your real name or other sensitive personal information as your public username.</p>
-    <p>We may process match and gameplay information to operate multiplayer services, enforce fair-play rules, investigate abuse, and maintain competitive rankings.</p>
-
-    <h2>5. Virtual Coins and In-Game Purchases</h2>
-    <p>ARROUT may offer virtual coins, rewards, cosmetic items, or other in-game features.</p>
-    <p>Virtual coins are digital game items and are not real money unless explicitly stated otherwise. They cannot be redeemed for cash or transferred outside the game unless a feature expressly permits this.</p>
-    <p>We may maintain records of coin balances, earned rewards, spending, and purchases to prevent fraud and correct account discrepancies.</p>
-    <p>Purchases are subject to the terms of the relevant payment provider and applicable laws.</p>
-
-    <h2>6. Advertising and Analytics</h2>
-    <p>If we integrate advertising or analytics services, those providers may process certain device identifiers, app activity, diagnostic information, or advertising-related data according to their own policies and the settings enabled in ARROUT.</p>
-    <p>Before release, we will identify the third-party services actually used and disclose their relevant data practices.</p>
-    <p>Where required, we will provide appropriate notices, obtain consent, and offer applicable privacy choices. We will not claim that ARROUT contains no advertising or analytics unless that is accurate for the released version.</p>
-
-    <h2>7. How We Share Information</h2>
-    <p>We do not sell your personal information in exchange for money.</p>
-    <p>We may share information with:</p>
-    <ul>
-      <li><strong>Service providers:</strong> Hosting, authentication, databases, multiplayer infrastructure, crash reporting, and customer support providers.</li>
-      <li><strong>Other players:</strong> Public profile details, rankings, and match information needed for multiplayer features.</li>
-      <li><strong>Payment providers:</strong> Information necessary to verify and process purchases.</li>
-      <li><strong>Advertising or analytics partners:</strong> Data processed through integrations enabled in the game.</li>
-      <li><strong>Legal authorities:</strong> Information where disclosure is required by law or reasonably necessary to protect users, our rights, or the security of the game.</li>
-      <li><strong>Business successors:</strong> Information transferred as part of a lawful merger, acquisition, or business restructuring, subject to applicable requirements.</li>
-    </ul>
-    <p>Service providers are permitted to process information as necessary for their assigned services and under applicable contractual and legal requirements.</p>
-
-    <h2>8. Data Security</h2>
-    <p>We use reasonable technical and organisational safeguards appropriate to the information we handle. Depending on the system, these may include access controls, secure authentication, encrypted network connections, and restricted access to stored information.</p>
-    <p>No online service can guarantee absolute security. We cannot promise that unauthorised access or data loss will never occur, but we will take reasonable steps to protect information and respond to security incidents.</p>
-
-    <h2>9. Data Retention and Deletion</h2>
-    <p>We retain information only for as long as reasonably necessary for the purposes described in this policy, including providing the game, maintaining accounts, resolving disputes, preventing fraud, and meeting legal obligations.</p>
-    <p>When information is no longer needed, we will delete it or anonymise it where appropriate, subject to applicable law and legitimate retention requirements.</p>
-    <p>If ARROUT supports account creation, users will be able to request account deletion through an in-game option, via our dedicated <a href="../delete-account/" style="color: #6C5CE7; font-weight: 700;">Account Deletion Request Page</a>, or directly by emailing <a href="mailto:web.sannivesham@gmail.com?subject=ARROUT%20-%20Account%20%26%20Data%20Deletion%20Request&body=Hello%20ARROUT%20Support%20Team%2C%0A%0AI%20am%20requesting%20the%20permanent%20deletion%20of%20my%20ARROUT%20game%20account%20and%20all%20associated%20data.%0A%0APlease%20find%20my%20account%20details%20below%3A%0A-%20In-Game%20Username%20%2F%20Display%20Name%3A%20%0A-%20Registered%20Email%20Address%3A%20%0A-%20Player%20ID%20%28if%20known%29%3A%20%0A%0AI%20understand%20that%20this%20action%20is%20irreversible%20and%20will%20delete%20all%20my%20game%20progress%2C%20coins%2C%20scores%2C%20and%20inventory.%0A%0AThank%20you." style="color: #6C5CE7; font-weight: 700; text-decoration: none;">web.sannivesham@gmail.com (Click to open pre-filled deletion request)</a>. We will explain any applicable exceptions or retention requirements.</p>
-    <p>Deleting an account may permanently remove associated progress, rankings, virtual coins, and other account data. Information that must be retained for legal, security, or fraud-prevention reasons will be restricted and retained only as permitted by law.</p>
-
-    <h2>10. Children's Privacy</h2>
-    <p>ARROUT is not intentionally designed to collect personal information from children in violation of applicable law.</p>
-    <p>If the game is made available to children or includes children within its target audience, we will implement the age-appropriate safeguards, consent requirements, advertising restrictions, and other protections required by applicable law and Google Play's Families policies.</p>
-    <p>Parents or legal guardians who believe a child has provided personal information inappropriately may contact us using the details below. We will review the request and take appropriate action in accordance with applicable law.</p>
-
-    <h2>11. Your Privacy Rights</h2>
-    <p>Depending on your location and applicable law, you may have the right to:</p>
-    <ul>
-      <li>Request access to personal information we hold about you.</li>
-      <li>Request correction of inaccurate information.</li>
-      <li>Request deletion of your account or personal information.</li>
-      <li>Withdraw consent where processing relies on consent.</li>
-      <li>Object to or restrict certain processing.</li>
-      <li>Exercise applicable rights concerning advertising and tracking.</li>
-    </ul>
-    <p>To exercise a right, contact us using the email address below. We may need to verify your identity before fulfilling certain requests.</p>
-    <p>We will respond in accordance with applicable legal requirements.</p>
-
-    <h2>12. International Data Transfers</h2>
-    <p>Some of our service providers may store or process information in countries other than your own. Where this occurs, we will take the steps required by applicable law to protect the information.</p>
-
-    <h2>13. Third-Party Services and Links</h2>
-    <p>ARROUT may use third-party services or provide links to external websites. These services have their own privacy policies and terms.</p>
-    <p>We encourage you to review the policies of any third-party service you use. This policy applies to ARROUT and does not independently govern external services.</p>
-
-    <h2>14. Changes to This Privacy Policy</h2>
-    <p>We may update this Privacy Policy when the game, our data practices, or applicable legal requirements change.</p>
-    <p>We will update the “Last updated” date when changes are made. Where required, we will provide additional notice or obtain consent before implementing material changes.</p>
-    <p>The latest version will be available through the privacy-policy link in the game and on our public webpage.</p>
-
-    <h2>15. Contact Us</h2>
-    <p>For questions, privacy requests, or account-deletion requests, contact:</p>
     <div class="contact-box">
-      <p>Game: ARROUT</p>
-      <p>Developer or legal entity: reshwanth</p>
-      <p>Email: <a href="mailto:web.sannivesham@gmail.com">web.sannivesham@gmail.com</a></p>
-      <p>Privacy Policy URL: <a href="https://sannivesham.github.io/arrow-escape/privacy-policy/">https://sannivesham.github.io/arrow-escape/privacy-policy/</a></p>
-      <p>Account Deletion Request: <a href="https://sannivesham.github.io/arrow-escape/delete-account/">https://sannivesham.github.io/arrow-escape/delete-account/</a></p>
+      <p>Developer: <strong>reshwanth</strong></p>
+      <p>Contact Email: <a href="mailto:web.sannivesham@gmail.com">web.sannivesham@gmail.com</a></p>
+      <p>Official Website: <a href="https://sannivesham.github.io/arrow-escape/" target="_blank">https://sannivesham.github.io/arrow-escape/</a></p>
+    </div>
+
+    <!-- 2. Information We Collect -->
+    <h2 id="sec-2">2. Information We Collect</h2>
+    <p>We believe in data minimization. We only collect or process information that is genuinely necessary to operate game features, save your puzzle progress, and facilitate fair multiplayer competitions.</p>
+
+    <h3>A. Account and Profile Information (Optional)</h3>
+    <p>If you create a player profile or use account synchronization, we may collect:</p>
+    <ul>
+      <li><strong>Display Name / Username:</strong> A player-chosen nickname displayed in the game and on public leaderboards. We encourage players not to use their real full names.</li>
+      <li><strong>Email Address:</strong> Only if provided for registration, account sign-in, or account recovery.</li>
+      <li><strong>Authentication Identifiers:</strong> Anonymous user tokens provided by authentication providers (such as Google Play Games Services).</li>
+      <li><strong>Profile Avatar:</strong> Pre-selected in-game avatar icon or custom profile thumbnail.</li>
+      <li><strong>Settings & Preferences:</strong> Audio volume, haptic feedback toggles, and appearance preferences.</li>
+    </ul>
+
+    <h3>B. Gameplay Progress & Statistics</h3>
+    <p>To enable level progression, save games, and rank online duels, we store:</p>
+    <ul>
+      <li>Levels unlocked, completed, and 3-star completion scores.</li>
+      <li>Leaderboard rankings, tournament records, and match results.</li>
+      <li>Multiplayer duel statistics (MMR rating, matches won, matches played).</li>
+      <li>Virtual coin balance earned through gameplay achievements.</li>
+    </ul>
+
+    <h3>C. Device & Technical Information</h3>
+    <p>To diagnose technical crashes and guarantee performance across Android device configurations, we or our trusted service providers (e.g. Google Play Services) may process:</p>
+    <ul>
+      <li>Device model, manufacturer, and operating system version (e.g. Android 13).</li>
+      <li>Crash logs, stack traces, and system performance metrics.</li>
+      <li>Internet Protocol (IP) address (used solely for establishing low-latency multiplayer connections and regional server routing).</li>
+      <li>Anonymous app instance identifiers or advertising ID (AAID) for fraud prevention, analytics, or compliant advertising.</li>
+    </ul>
+
+    <!-- 3. No Payments or Financial Data -->
+    <h2 id="sec-3">3. No Real-Money Purchases or Financial Data <span class="badge-no-pay">100% Free</span></h2>
+    <p><strong>ARROUT does NOT offer real-money purchases, microtransactions, or paid virtual items.</strong></p>
+    <ul>
+      <li>We do <strong>NOT</strong> collect, request, process, or store credit card numbers, debit card details, bank account credentials, billing addresses, or payment transaction histories.</li>
+      <li>All levels, game modes (Classic Mode, Daily Challenge, Weekly Tournament, Online 1v1 Battle), and in-game shop items are completely accessible through regular gameplay without spending real currency.</li>
+      <li>If any third-party claims to sell ARROUT items or coins for real money, it is unauthorized.</li>
+    </ul>
+
+    <!-- 4. Device Permissions -->
+    <h2 id="sec-4">4. Device Permissions (Zero Sensitive Permissions Required)</h2>
+    <p>In accordance with Google Play's Permissions policy, ARROUT does not ask for or use any dangerous or sensitive runtime device permissions:</p>
+    <ul>
+      <li>❌ <strong>No Camera Access:</strong> We do not access your camera.</li>
+      <li>❌ <strong>No Microphone / Audio Recording:</strong> We do not record or listen to audio.</li>
+      <li>❌ <strong>No Contacts or Phonebook:</strong> We do not access your phone contacts.</li>
+      <li>❌ <strong>No Precise Location (GPS):</strong> We do not track or request your precise geographical coordinates.</li>
+      <li>❌ <strong>No SMS or Phone State:</strong> We do not read text messages or phone call status.</li>
+      <li>❌ <strong>No Storage / Photos:</strong> We do not access your personal media or device storage.</li>
+      <li>✔️ <strong>Standard Network Access:</strong> ARROUT only requests standard internet access (`android.permission.INTERNET` and `ACCESS_NETWORK_STATE`) to synchronize online multiplayer battles, tournaments, and cloud progress.</li>
+    </ul>
+
+    <!-- 5. How We Use Information -->
+    <h2 id="sec-5">5. How We Use Information</h2>
+    <p>We use the minimal information collected exclusively for legitimate game operations:</p>
+    <ul>
+      <li>To save, maintain, and restore your level progress across game sessions.</li>
+      <li>To operate online 1v1 multiplayer matchmaking and calculate fair competitive leaderboard standings.</li>
+      <li>To award virtual coins for puzzle achievements and maintain in-game reward inventories.</li>
+      <li>To identify technical bugs, monitor server latency, and prevent crash regressions.</li>
+      <li>To detect and prevent cheating, exploits, and bot manipulation to ensure fair play for all users.</li>
+      <li>To respond directly to support inquiries and account deletion requests.</li>
+    </ul>
+    <p>We do not use your personal information for automated profiling, credit scoring, or purposes unrelated to the game.</p>
+
+    <!-- 6. Multiplayer & Public Information -->
+    <h2 id="sec-6">6. Online Multiplayer, Duels & Public Information</h2>
+    <p>When participating in Online 1v1 Battles, Weekly Tournaments, or public Leaderboards, certain non-sensitive game profile information is visible to other players:</p>
+    <ul>
+      <li>Your chosen username or display nickname.</li>
+      <li>Your selected avatar icon.</li>
+      <li>Your puzzle scores, win-loss records, and leaderboard ranking.</li>
+    </ul>
+    <p><em>Security Tip:</em> We strongly advise all players to choose a fun, creative gaming pseudonym and avoid using real names, phone numbers, or private personal details as their in-game display name.</p>
+
+    <!-- 7. Virtual Coins -->
+    <h2 id="sec-7">7. Free In-Game Virtual Coins & Items</h2>
+    <p>ARROUT features virtual coins and stars solely as gameplay progression rewards:</p>
+    <ul>
+      <li>Virtual coins are digital game tokens earned solely by clearing puzzle boards, finishing daily puzzles, and winning friendly duels.</li>
+      <li>Virtual coins <strong>cannot</strong> be bought with real money, cannot be redeemed for real-world currency, and have no monetary value.</li>
+      <li>Virtual coins are non-transferable outside the game and exist exclusively to unlock cosmetic puzzle items and hints within the ARROUT app.</li>
+    </ul>
+
+    <!-- 8. Advertising & Analytics -->
+    <h2 id="sec-8">8. Advertising and Analytics</h2>
+    <p>To keep ARROUT free for all players, we may display non-intrusive advertisements or utilize privacy-conscious analytics services provided by established platforms such as Google:</p>
+    <ul>
+      <li><strong>Google Play Services:</strong> Core backend services for game authentication, cloud saves, and achievement reporting. (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>)</li>
+      <li><strong>Google AdMob:</strong> May serve banner or interstitial ads in compliant formats. AdMob may process your device's Google Advertising ID (AAID) in accordance with Google's policies.</li>
+    </ul>
+    <p><strong>Your Opt-Out Choices:</strong> You can manage or disable personalized advertising at any time on your Android device by visiting: <em>Settings → Google → Ads → Reset advertising ID</em> or <em>Delete advertising ID</em>.</p>
+
+    <!-- 9. How We Share Information -->
+    <h2 id="sec-9">9. How We Share Information</h2>
+    <p><strong>We never sell, rent, or trade your personal information for monetary or commercial compensation.</strong></p>
+    <p>Information may only be shared under the following strictly limited circumstances:</p>
+    <ul>
+      <li><strong>Trusted Technical Service Providers:</strong> Cloud hosting, database infrastructure, and crash diagnostic providers bound by strict confidentiality and data protection agreements.</li>
+      <li><strong>Legal and Safety Requirements:</strong> If required by valid court order, applicable law, or to protect the safety, security, and integrity of our players and services.</li>
+      <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, or restructuring, where user data is transferred under terms consistent with this Privacy Policy.</li>
+    </ul>
+
+    <!-- 10. Data Security -->
+    <h2 id="sec-10">10. Data Security</h2>
+    <p>We implement robust technical and administrative safeguards to protect your information:</p>
+    <ul>
+      <li><strong>Encryption in Transit:</strong> All communication between the game client and backend servers is encrypted using industry-standard TLS / HTTPS cryptographic protocols.</li>
+      <li><strong>Access Controls:</strong> Server infrastructure and databases are restricted to authorized personnel with strict multi-factor authentication.</li>
+      <li><strong>Continuous Monitoring:</strong> Regular reviews of security practices to guard against unauthorized access, alteration, disclosure, or destruction of data.</li>
+    </ul>
+
+    <!-- 11. Data Retention & Account Deletion -->
+    <h2 id="sec-11">11. Data Retention & Account Deletion (Google Play Mandate)</h2>
+    <p>We retain gameplay and profile data only for as long as your account remains active or as needed to provide game services.</p>
+    <p><strong>How to Delete Your Account and Data:</strong><br>
+    In compliance with Google Play's Account Deletion Policy, any player can request the immediate and permanent deletion of their account, username, progress, and all associated personal data through any of the following methods:</p>
+    <ul>
+      <li><strong>Web Deletion Portal (No app reinstall needed):</strong> Visit our dedicated <a href="https://sannivesham.github.io/arrow-escape/delete-account/" target="_blank"><strong>Account Deletion Request Page</strong></a> and submit your player username or registered email.</li>
+      <li><strong>Direct Email Request:</strong> Send an email to <a href="mailto:web.sannivesham@gmail.com?subject=ARROUT%20-%20Account%20%26%20Data%20Deletion%20Request&body=Hello%20ARROUT%20Support%20Team%2C%0A%0AI%20am%20requesting%20the%20permanent%20deletion%20of%20my%20ARROUT%20game%20account%20and%20all%20associated%20data.%0A%0APlease%20find%20my%20account%20details%20below%3A%0A-%20In-Game%20Username%20%2F%20Display%20Name%3A%20%0A-%20Registered%20Email%20Address%3A%20%0A-%20Player%20ID%20%28if%20known%29%3A%20%0A%0AI%20understand%20that%20this%20action%20is%20irreversible%20and%20will%20delete%20all%20my%20game%20progress%2C%20coins%2C%20scores%2C%20and%20inventory.%0A%0AThank%20you."><strong>web.sannivesham@gmail.com</strong></a> with the subject line <em>"ARROUT - Account & Data Deletion Request"</em>.</li>
+    </ul>
+    <p>Upon receipt of your request, all personal data, game progress, and leaderboard scores will be permanently deleted or anonymized within <strong>30 days</strong>.</p>
+    <a href="https://sannivesham.github.io/arrow-escape/delete-account/" class="pill-link-btn" target="_blank">
+      🗑️ Open Dedicated Account Deletion Page
+    </a>
+
+    <!-- 12. Children's Privacy -->
+    <h2 id="sec-12">12. Children's Privacy & Google Play Families Policy</h2>
+    <p>ARROUT is an all-ages arrow puzzle game that respects the privacy of young players:</p>
+    <ul>
+      <li>We do not knowingly collect, solicit, or maintain personally identifiable information from children under the age of 13 (or under the minimum age specified by local law in your territory, such as 16 in the EU).</li>
+      <li>We strictly comply with the U.S. Children’s Online Privacy Protection Act (<strong>COPPA</strong>) and <strong>Google Play's Families Policies</strong>.</li>
+      <li>If we learn that personal information of a child under 13 has been collected without verified parental consent, we will take immediate steps to delete that information from our servers.</li>
+      <li>Parents or legal guardians who have questions or wish to review, update, or delete information relating to their child may contact us directly at <a href="mailto:web.sannivesham@gmail.com">web.sannivesham@gmail.com</a>.</li>
+    </ul>
+
+    <!-- 13. Your Privacy Rights -->
+    <h2 id="sec-13">13. Your Privacy Rights (GDPR & CCPA/CPRA Compliance)</h2>
+    <p>Regardless of your geographic location, we respect your rights regarding your personal data:</p>
+    <ul>
+      <li><strong>Right to Access:</strong> You have the right to request a copy of the personal information we hold about you.</li>
+      <li><strong>Right to Rectification:</strong> You have the right to request correction of inaccurate or incomplete data.</li>
+      <li><strong>Right to Erasure (“Right to be Forgotten”):</strong> You can request complete deletion of your account and data.</li>
+      <li><strong>Right to Restrict or Object to Processing:</strong> You can object to certain data processing activities.</li>
+      <li><strong>Non-Discrimination:</strong> We will never discriminate against you for exercising any of your privacy rights.</li>
+    </ul>
+    <p>To exercise any of these rights, please email us at <a href="mailto:web.sannivesham@gmail.com">web.sannivesham@gmail.com</a>. We will respond within the statutory timeframe (and at most 30 days).</p>
+
+    <!-- 14. Changes to This Policy -->
+    <h2 id="sec-14">14. Changes to This Privacy Policy</h2>
+    <p>We may update this Privacy Policy periodically to reflect new features, operational enhancements, or evolving legal and Google Play policy requirements.</p>
+    <p>When changes are made, we will update the “Last updated” date at the top of this document. Material changes will be communicated via in-game notices or on our official website. Continued use of ARROUT following the posting of updates constitutes your acceptance of the revised policy.</p>
+
+    <!-- 15. Contact Information -->
+    <h2 id="sec-15">15. Contact Information & Developer Details</h2>
+    <p>If you have any questions, suggestions, feedback, or data requests regarding this Privacy Policy or ARROUT, please contact us:</p>
+    
+    <div class="contact-box">
+      <p>Game Title: <strong>ARROUT</strong></p>
+      <p>Developer / Publisher: <strong>reshwanth</strong></p>
+      <p>Privacy & Support Email: <a href="mailto:web.sannivesham@gmail.com">web.sannivesham@gmail.com</a></p>
+      <p>Privacy Policy Link: <a href="https://sannivesham.github.io/arrow-escape/privacy-policy/">https://sannivesham.github.io/arrow-escape/privacy-policy/</a></p>
+      <p>Account Deletion Request Portal: <a href="https://sannivesham.github.io/arrow-escape/delete-account/">https://sannivesham.github.io/arrow-escape/delete-account/</a></p>
     </div>
   </div>
 
