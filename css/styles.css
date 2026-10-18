@@ -173,14 +173,22 @@ body.screen-home-active {
 
 body.screen-home-active .app-viewport,
 .mobile-app-frame.screen-home-active .app-viewport {
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px 18px 76px 18px;
+  padding: 8px 18px 88px 18px;
   display: flex;
   flex-direction: column;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
-.app-viewport::-webkit-scrollbar { display: none; }
+body.screen-home-active .app-viewport::-webkit-scrollbar,
+.mobile-app-frame.screen-home-active .app-viewport::-webkit-scrollbar,
+.app-viewport::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
 
 .app-screen {
   display: none;
@@ -196,10 +204,11 @@ body.screen-home-active .app-viewport,
 #screen-home.active {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  max-height: 100%;
-  overflow: hidden;
+  justify-content: flex-start;
+  gap: 14px;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
 }
 
 @keyframes screenFadeIn {
@@ -209,12 +218,12 @@ body.screen-home-active .app-viewport,
 
 /* Welcome Section */
 .welcome-section {
-  margin: 2px 0 8px 0;
+  margin: 4px 0 0 0;
   flex-shrink: 0;
 }
 
 .welcome-label {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   color: #8C9CAE;
   font-weight: 500;
   margin-bottom: 2px;
@@ -222,19 +231,19 @@ body.screen-home-active .app-viewport,
 
 .welcome-heading {
   font-family: var(--font-serif);
-  font-size: 1.85rem;
+  font-size: 2.15rem;
   font-weight: 800;
   color: var(--text-navy);
   letter-spacing: -0.5px;
   line-height: 1.15;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .welcome-desc {
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   color: #64748B;
-  line-height: 1.35;
-  max-width: 310px;
+  line-height: 1.4;
+  max-width: 320px;
 }
 
 /* Featured Play Card */
@@ -243,9 +252,9 @@ body.screen-home-active .app-viewport,
   background: linear-gradient(135deg, #FBF0F4 0%, #F5F1FD 45%, #EEF6FC 75%, #F0FBF6 100%);
   border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow: var(--clay-shadow);
-  border-radius: 24px;
-  padding: 14px 18px;
-  margin-bottom: 10px;
+  border-radius: 28px;
+  padding: 18px 22px;
+  margin-bottom: 0;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -261,37 +270,37 @@ body.screen-home-active .app-viewport,
   display: flex;
   flex-direction: column;
   z-index: 2;
-  max-width: 60%;
+  max-width: 58%;
 }
 
 .featured-tag {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 2px;
   color: #5A6B82;
   text-transform: uppercase;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .featured-title {
   font-family: var(--font-serif);
-  font-size: 1.85rem;
+  font-size: 2.1rem;
   font-weight: 800;
   color: var(--text-navy);
   letter-spacing: -0.5px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .featured-sub {
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   color: #64748B;
-  line-height: 1.3;
-  margin-bottom: 8px;
+  line-height: 1.35;
+  margin-bottom: 12px;
 }
 
 .circle-arrow-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #9D96FA;
   display: flex;
@@ -303,8 +312,8 @@ body.screen-home-active .app-viewport,
 
 .featured-right-illustration {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -314,19 +323,18 @@ body.screen-home-active .app-viewport,
 .modes-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 4px;
+  gap: 12px;
+  margin-bottom: 0;
   flex-shrink: 0;
 }
 
 .mode-grid-card {
   position: relative;
-  min-height: 102px;
-  height: 106px;
-  border-radius: 22px;
+  height: 122px;
+  border-radius: 24px;
   border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow: var(--clay-shadow);
-  padding: 10px 12px 8px 12px;
+  padding: 14px 14px 12px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -349,12 +357,12 @@ body.screen-home-active .app-viewport,
 .card-top-content {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
 }
 
 .card-3d-icon {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -364,15 +372,29 @@ body.screen-home-active .app-viewport,
 .card-heading {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
   color: var(--text-navy);
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 .card-desc-text {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   color: #7E8B9B;
   font-weight: 500;
+}
+
+.card-arrow-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5C6E87;
+  font-size: 0.72rem;
+  margin-left: auto;
 }
 
 .card-bottom-row {
