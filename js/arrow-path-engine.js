@@ -37,19 +37,36 @@ class BendingArrowEngine {
     this.rows = puzzleData.rows || 15;
     this.shapeType = puzzleData.shapeType || puzzleData.shape || 'diamond';
     this.shapeName = puzzleData.shapeName || 'Shape';
-    this.shapeMask = puzzleData.shapeMask || (window.BendingPuzzleGenerator?.getShapeMask ? window.BendingPuzzleGenerator.getShapeMask(this.shapeType, this.cols, this.rows) : null);
+
+    // Mask function: support user generator maskOf or fallback
+    if (puzzleData.prims && puzzleData.ar && typeof window.maskOf === 'function') {
+      const mk = window.maskOf(puzzleData.prims, puzzleData.ar);
+      this.shapeMask = (x, y) => mk(x, y, this.cols, this.rows);
+    } else {
+      this.shapeMask = puzzleData.shapeMask || (window.BendingPuzzleGenerator?.getShapeMask ? window.BendingPuzzleGenerator.getShapeMask(this.shapeType, this.cols, this.rows) : null);
+    }
+
     this.arrows.clear();
+    this.grid = Array.from({ length: this.rows }, () => Array(this.cols).fill(-1));
     this.hearts = 3;
     this.isLocked = false;
     this.moveHistory = [];
     this.startTime = Date.now();
 
     puzzleData.arrows.forEach(a => {
+      const pts = a.points.map(p => ({ x: p.x, y: p.y }));
       this.arrows.set(a.id, {
         id: a.id,
-        points: a.points.map(p => ({ x: p.x, y: p.y })),
+        points: pts,
         dir: a.dir,
+        dirNum: a.dirNum,
         element: null
+      });
+
+      pts.forEach(p => {
+        if (p.y >= 0 && p.y < this.rows && p.x >= 0 && p.x < this.cols) {
+          this.grid[p.y][p.x] = a.id;
+        }
       });
     });
 
@@ -104,17 +121,17 @@ class BendingArrowEngine {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', this.padX + c * this.cellW);
         circle.setAttribute('cy', this.padY + r * this.cellH);
-        circle.setAttribute('r', inShape ? '2.2' : '1.2');
+        circle.setAttribute('r', inShape ? String(Math.max(1.1, Math.min(2.0, this.cellW * 0.1))) : '0.8');
         circle.setAttribute('fill', inShape ? '#CBD5E1' : '#E2E8F0');
-        circle.setAttribute('opacity', inShape ? '0.9' : '0.25');
+        circle.setAttribute('opacity', inShape ? '0.9' : '0.22');
         dotsGroup.appendChild(circle);
       }
     }
     svg.appendChild(dotsGroup);
 
     // Dynamic stroke and head size proportional to grid density
-    this.strokeWidth = Math.max(3.8, Math.min(5.5, this.cellW * 0.18));
-    this.arrowHeadSize = Math.max(6.5, Math.min(10, this.cellW * 0.38));
+    this.strokeWidth = Math.max(2.4, Math.min(5.2, this.cellW * 0.22));
+    this.arrowHeadSize = Math.max(5.0, Math.min(10.5, this.cellW * 0.45));
 
     // Draw Arrow Groups
     this.arrows.forEach(arrow => {
@@ -219,54 +236,18 @@ class BendingArrowEngine {
     const head = arrow.points[arrow.points.length - 1];
     const { dx, dy } = this.getDirVector(arrow.dir);
 
-    for (const [otherId, otherArrow] of this.arrows.entries()) {
-      if (otherId === arrowId) continue;
-
-      // 1. Check all vertices
-      for (const pt of otherArrow.points) {
-        if (dx === 0 && dy < 0 && pt.x === head.x && pt.y < head.y) return { blocked: true, blockerId: otherId };
-        if (dx === 0 && dy > 0 && pt.x === head.x && pt.y > head.y) return { blocked: true, blockerId: otherId };
-        if (dx < 0 && dy === 0 && pt.y === head.y && pt.x < head.x) return { blocked: true, blockerId: otherId };
-        if (dx > 0 && dy === 0 && pt.y === head.y && pt.x > head.x) return { blocked: true, blockerId: otherId };
+    // Fast grid raycasting matching the generator's freeIn()
+    let x = head.x + dx;
+    let y = head.y + dy;
+    while (x >= 0 && y >= 0 && x < this.cols && y < this.rows) {
+      if (this.grid && this.grid[y] && this.grid[y][x] >= 0 && this.grid[y][x] !== arrowId) {
+        return { blocked: true, blockerId: this.grid[y][x] };
       }
-
-      // 2. Check all segments
-      for (let i = 0; i < otherArrow.points.length - 1; i++) {
-        const p1 = otherArrow.points[i];
-        const p2 = otherArrow.points[i + 1];
-        if (this.rayIntersectsSegment(head, dx, dy, p1, p2)) {
-          return { blocked: true, blockerId: otherId };
-        }
-      }
+      x += dx;
+      y += dy;
     }
 
     return { blocked: false };
-  }
-
-  rayIntersectsSegment(head, dx, dy, p1, p2) {
-    const minX = Math.min(p1.x, p2.x);
-    const maxX = Math.max(p1.x, p2.x);
-    const minY = Math.min(p1.y, p2.y);
-    const maxY = Math.max(p1.y, p2.y);
-
-    const isHoriz = p1.y === p2.y;
-    const isVert = p1.x === p2.x;
-
-    if (dx === 0 && dy < 0) { // UP
-      if (isHoriz && head.x >= minX && head.x <= maxX && head.y > p1.y) return true;
-      if (isVert && head.x === p1.x && head.y > minY) return true;
-    } else if (dx === 0 && dy > 0) { // DOWN
-      if (isHoriz && head.x >= minX && head.x <= maxX && head.y < p1.y) return true;
-      if (isVert && head.x === p1.x && head.y < maxY) return true;
-    } else if (dx < 0 && dy === 0) { // LEFT
-      if (isVert && head.y >= minY && head.y <= maxY && head.x > p1.x) return true;
-      if (isHoriz && head.y === p1.y && head.x > minX) return true;
-    } else if (dx > 0 && dy === 0) { // RIGHT
-      if (isVert && head.y >= minY && head.y <= maxY && head.x < p1.x) return true;
-      if (isHoriz && head.y === p1.y && head.x < maxX) return true;
-    }
-
-    return false;
   }
 
   handleArrowTap(arrowId) {
@@ -327,6 +308,15 @@ class BendingArrowEngine {
     this.arrows.delete(arrow.id);
     this.moveHistory.push(arrow);
 
+    // Immediately clear from spatial collision grid so subsequent taps can escape!
+    if (this.grid) {
+      arrow.points.forEach(p => {
+        if (this.grid[p.y] && this.grid[p.y][p.x] === arrow.id) {
+          this.grid[p.y][p.x] = -1;
+        }
+      });
+    }
+
     if (arrow.element) {
       this.animateArrowAlongPath(arrow);
     }
@@ -356,10 +346,11 @@ class BendingArrowEngine {
     // 1. Calculate extended forward path exiting the board
     const headGrid = arrow.points[arrow.points.length - 1];
     let exitGrid = { x: headGrid.x, y: headGrid.y };
-    if (arrow.dir === 'UP') exitGrid.y = -4;
-    else if (arrow.dir === 'DOWN') exitGrid.y = this.rows + 3;
-    else if (arrow.dir === 'LEFT') exitGrid.x = -4;
-    else if (arrow.dir === 'RIGHT') exitGrid.x = this.cols + 3;
+    const exitPadding = Math.max(this.cols, this.rows) + 5;
+    if (arrow.dir === 'UP') exitGrid.y = -exitPadding;
+    else if (arrow.dir === 'DOWN') exitGrid.y = this.rows + exitPadding;
+    else if (arrow.dir === 'LEFT') exitGrid.x = -exitPadding;
+    else if (arrow.dir === 'RIGHT') exitGrid.x = this.cols + exitPadding;
 
     const fullPolyGrid = [...arrow.points, exitGrid];
     const fullPolyPx = fullPolyGrid.map(p => this.getPixelPos(p.x, p.y));
@@ -482,6 +473,13 @@ class BendingArrowEngine {
     if (this.moveHistory.length === 0 || this.isLocked) return false;
     const last = this.moveHistory.pop();
     this.arrows.set(last.id, last);
+    if (this.grid) {
+      last.points.forEach(p => {
+        if (this.grid[p.y]) {
+          this.grid[p.y][p.x] = last.id;
+        }
+      });
+    }
     this.hearts = Math.min(this.maxHearts, this.hearts + 1);
     this.onHeartsChange(this.hearts, this.maxHearts);
     this.render();

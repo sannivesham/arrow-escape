@@ -102,7 +102,7 @@ class BendingPuzzleGenerator {
   static generateLevel(levelNum = 1, difficulty = 'normal') {
     const num = Math.max(1, Number(levelNum) || 1);
 
-    // Prioritize 100 verified shape levels from arrout_100_levels.json
+    // 1. Prioritize pre-generated master levels 1..100
     if (window.ARROUT_LEVELS_100 && window.ARROUT_LEVELS_100[num - 1]) {
       const lvl = window.ARROUT_LEVELS_100[num - 1];
       return {
@@ -115,15 +115,23 @@ class BendingPuzzleGenerator {
         rows: lvl.rows,
         arrowCount: lvl.arrowCount,
         occupiedCellCount: lvl.occupiedCellCount,
-        solutionOrder: lvl.solutionOrder,
+        prims: lvl.prims,
+        ar: lvl.ar,
         arrows: lvl.arrows.map(a => ({
           id: a.id,
           points: a.points.map(p => ({ x: p.x, y: p.y })),
           dir: a.dir,
-          length: a.length,
-          folds: a.folds
+          dirNum: a.dirNum,
+          length: a.length
         }))
       };
+    }
+
+    // 2. On-demand dynamic generation via Arrout generator (levels.js) for levels > 100 or custom tiers
+    if (typeof window.generateArroutLevel === 'function') {
+      const tierMap = { easy: 'Easy', medium: 'Medium', normal: 'Medium', hard: 'Hard', expert: 'Expert' };
+      const targetTier = tierMap[String(difficulty).toLowerCase()] || 'Medium';
+      return window.generateArroutLevel(num, targetTier);
     }
 
     const cols = 11;
