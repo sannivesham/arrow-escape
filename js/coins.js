@@ -24,9 +24,13 @@
   /* ---- coin pill (home) ---- */
   var lastShown = null;
   function paintCoins() {
-    var c = coins(), el = $('home-coin-count'); if (!el) return;
-    el.textContent = c.toLocaleString();
-    if (lastShown !== null && c !== lastShown) { var p = el.closest('.home-coins'); p.classList.remove('bump'); void p.offsetWidth; p.classList.add('bump'); }
+    var c = coins(), el = $('home-coin-count');
+    if (el) {
+      el.textContent = c.toLocaleString();
+      if (lastShown !== null && c !== lastShown) { var p = el.closest('.home-coins'); if (p) { p.classList.remove('bump'); void p.offsetWidth; p.classList.add('bump'); } }
+    }
+    document.querySelectorAll('.user-coin-count').forEach(function (e) { e.textContent = c.toLocaleString(); });
+    var sc = $('shop-coins'); if (sc) sc.textContent = c.toLocaleString();
     lastShown = c;
   }
   // the coin gradient is defined once here (the icon is used in many places, ids must be unique)

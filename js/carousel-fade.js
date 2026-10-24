@@ -1,5 +1,5 @@
 (function(){
-var c=document.querySelector('.modes-grid-container'),ph=document.querySelector('.play-holder'),w=document.querySelector('.carousel-wrap');
+var c=document.querySelector('.modes-grid-container'),ph=document.querySelector('.play-fixed')||document.querySelector('.play-holder'),w=document.querySelector('.carousel-wrap');
 if(!c||!ph||!w)return;
 function f(){var cr=c.getBoundingClientRect(),pr=ph.getBoundingClientRect();
 var d=Math.abs((pr.left+pr.width/2)-(cr.left+cr.width/2));

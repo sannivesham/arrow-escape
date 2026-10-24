@@ -85,7 +85,7 @@
           </div>
 
         </div>
-<div class="play-fixed">
+<div class="play-fixed play-holder">
 <div class="mode-grid-card card-play" data-nav="puzzle">
             <div class="card-top-content">
               <div class="card-3d-icon">
@@ -284,6 +284,7 @@
           <div style="width: 100%; height: 6px; background: #F1F5F9; border-radius: 4px; overflow: hidden;">
             <div id="pvp-opp-progress-bar" style="width: 0%; height: 100%; background: #F43F5E; transition: width 0.3s;"></div>
           </div>
+          <div id="pvp-pot-badge" style="display: none; margin-top: 6px;"></div>
         </div>
 
         <!-- Dotted Board Viewport with Bending Arrow Paths -->
@@ -512,6 +513,7 @@
         <div style="background: linear-gradient(135deg, #EBF8F2 0%, #DCF3E8 100%); border-radius: 28px; padding: 26px 20px; text-align: center; box-shadow: var(--clay-shadow);">
           <div style="font-size: 2.8rem; margin-bottom: 8px;">📅</div>
           <h2 id="daily-challenge-date" style="font-family: var(--font-serif); font-size: 1.8rem; color: var(--text-navy); margin-bottom: 8px;">2026-10-15</h2>
+          <div id="daily-info" class="daily-info"></div>
           <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.45; margin-bottom: 16px;">
             Every day brings a unique deterministic puzzle! Solve today's challenge to earn 50 bonus coins and build your streak.
           </p>

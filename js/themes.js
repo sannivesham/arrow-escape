@@ -259,7 +259,7 @@
     var tabs = document.querySelector('#screen-shop .shop-tab'); if (tabs && tabs.parentNode) tabs.parentNode.style.display = 'none';
     var ttl = document.querySelector('#screen-shop .screen-main-title'); if (ttl) ttl.textContent = 'Theme Shop';
     var pill = document.querySelector('#screen-shop .coin-pill');
-    if (pill && !$('shop-balance')) { var b = document.createElement('div'); b.id = 'shop-balance'; b.className = 'shop-balance'; b.innerHTML = '<span id="shop-balance-icon"></span><span id="shop-coins">0</span>'; pill.parentNode.insertBefore(b, pill); }
+    if (pill && !$('shop-balance')) { var b = document.createElement('div'); b.id = 'shop-balance'; b.className = 'shop-balance'; b.innerHTML = '<span id="shop-balance-icon"></span><span id="shop-coins" class="user-coin-count">0</span>'; pill.parentNode.replaceChild(b, pill); }
     var ic = $('shop-balance-icon'); if (ic && !ic.firstChild) ic.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F5B83D" stroke="#D98A0B" stroke-width="1.5"/><circle cx="12" cy="12" r="6" fill="none" stroke="#D98A0B" stroke-opacity=".7" stroke-width="1.4"/></svg>';
     $('shop-coins').textContent = coins().toLocaleString();
     box.innerHTML = ''; var list = document.createElement('div'); list.className = 'th-list'; box.appendChild(list);
