@@ -11,12 +11,14 @@
  */
 
 window.DEFAULT_FIREBASE_CONFIG = {
-  apiKey: "AIzaSy_YOUR_API_KEY_HERE",
+  apiKey: "AIzaSyCHS8JSPlQKAczxSlMKyqqyRTyUoWI2KcI",
   authDomain: "arrout-game.firebaseapp.com",
+  databaseURL: "https://arrout-game-default-rtdb.firebaseio.com",
   projectId: "arrout-game",
-  storageBucket: "arrout-game.appspot.com",
-  messagingSenderId: "123456789000",
-  appId: "1:123456789000:web:abcdef1234567890"
+  storageBucket: "arrout-game.firebasestorage.app",
+  messagingSenderId: "803778725985",
+  appId: "1:803778725985:web:5a4a2478896b1849fd8220",
+  measurementId: "G-NHNFPHV4V8"
 };
 
 // Check if player configured a custom config in local settings
