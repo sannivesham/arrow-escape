@@ -122,6 +122,32 @@
       console.warn('[FirebaseRoom] onSnapshot error:', err);
     });
 
+    async function refreshDoc() {
+      try {
+        var doc = await docRef.get();
+        if (doc && doc.exists) {
+          var data = doc.data() || {};
+          var members = data.members || {};
+          var now = Date.now();
+          peersMap.clear();
+          Object.keys(members).forEach(function (pid) {
+            if (pid === myId) return;
+            var m = members[pid];
+            if (!m) return;
+            if (m.lastSeen && (now - m.lastSeen > 90000)) return;
+            peersMap.set(pid, {
+              presence: m.presence || {},
+              last: m.lastSeen || now
+            });
+          });
+          emit();
+        }
+        return list();
+      } catch (e) {
+        return list();
+      }
+    }
+
     var timer = setInterval(function () {
       if (!active) return;
       var hbMember = {};
@@ -135,6 +161,12 @@
       }, { merge: true }).catch(function () {});
     }, 4000);
 
+    // Auto-poll every 3s in lobby to ensure player counts are always fresh
+    var pollTimer = setInterval(function () {
+      if (!active || R.inGame) return;
+      refreshDoc();
+    }, 3000);
+
     return {
       presence: function (p) {
         mine = Object.assign({}, mine, p);
@@ -142,6 +174,7 @@
         emit();
       },
       peers: list,
+      refresh: refreshDoc,
       onPeers: function (f) {
         subs.add(f);
         try { f({ peers: list() }); } catch (e) {}
@@ -150,6 +183,7 @@
       leave: function () {
         active = false;
         clearInterval(timer);
+        clearInterval(pollTimer);
         if (unsubSnapshot) { try { unsubSnapshot(); } catch (e) {} unsubSnapshot = null; }
         subs.clear();
         var del = {};
@@ -345,6 +379,26 @@
 
   /* ---------- buttons ---------- */
   function wire() {
+    var refreshBtn = $('room-refresh-btn');
+    if (refreshBtn) {
+      refreshBtn.onclick = async function () {
+        if (refreshBtn.classList.contains('spinning')) return;
+        refreshBtn.classList.add('spinning');
+        toast('Refreshing player list...');
+        if (R.conn) {
+          try {
+            R.conn.presence({ name: R.name, host: R.host, left: null, go: 0 });
+          } catch (e) {}
+          if (typeof R.conn.refresh === 'function') {
+            await R.conn.refresh();
+          }
+          onPeers({ peers: R.conn.peers() });
+        }
+        setTimeout(function () {
+          refreshBtn.classList.remove('spinning');
+        }, 600);
+      };
+    }
     $('room-create').onclick = async function () {
       var btn = $('room-create');
       btn.disabled = true;

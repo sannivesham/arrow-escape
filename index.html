@@ -390,7 +390,14 @@
               <input id="room-link" class="room-link" readonly aria-label="Room link">
               <button id="room-copy-code" class="room-btn room-btn-alt">COPY CODE</button>
             </div>
-            <div class="room-players-head">Players in room: <b id="room-count">1</b></div>
+            <div class="room-players-head" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+              <span>Players in room: <b id="room-count">1</b></span>
+              <button id="room-refresh-btn" type="button" aria-label="Refresh players list" title="Refresh players" class="btn-room-refresh">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/>
+                </svg>
+              </button>
+            </div>
             <div id="room-players" class="room-players"></div>
             <p id="room-wait" class="room-p"></p>
             <p id="room-local-note" class="room-p" hidden style="font-size:.78rem;color:#B45309;">Offline mode: this build has no game server, so a friend can only join from another tab or window of this same browser.</p>

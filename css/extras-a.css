@@ -18,3 +18,8 @@
 .room-players{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .room-chip{background:#EEF3FB;color:var(--text-navy);border-radius:14px;padding:7px 12px;font-size:.82rem;font-weight:700}
 .room-chip.me{background:#DDF3E8;color:#1F7A55}
+
+.btn-room-refresh{background:#EEF3FB;border:1px solid #D7E3F6;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-navy);transition:transform .2s ease,background .2s ease;padding:0}
+.btn-room-refresh:active{transform:scale(.9)}
+.btn-room-refresh.spinning svg{animation:roomSpin .6s linear infinite}
+@keyframes roomSpin{100%{transform:rotate(360deg)}}
