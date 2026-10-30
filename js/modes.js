@@ -129,15 +129,41 @@
     var name = NAMES[Math.floor(Math.random() * NAMES.length)], idx = Math.floor(Math.random() * N);
     if (st) st.textContent = 'Searching for opponent...'; if (radar) radar.classList.add('searching');
     if ($('matchmaking-actions')) $('matchmaking-actions').style.display = 'block';
+
+    // Firebase live matchmaking queue check
+    var hasFb = typeof firebase !== 'undefined' && firebase.firestore && firebase.apps.length;
+    var myUid = (firebase.auth && firebase.auth().currentUser && firebase.auth().currentUser.uid) ||
+                (window.storageManager && window.storageManager.data && window.storageManager.data.playerId) ||
+                ('anon_' + Math.random().toString(36).slice(2, 8));
+    var myName = (firebase.auth && firebase.auth().currentUser && (firebase.auth().currentUser.displayName || firebase.auth().currentUser.email)) ||
+                 (window.storageManager && window.storageManager.data && window.storageManager.data.username) || 'Player';
+
+    if (hasFb) {
+      if (st) st.textContent = 'Searching online queue...';
+      try {
+        var db = firebase.firestore();
+        var qDoc = db.collection('battles_queue').doc(myUid);
+        qDoc.set({
+          uid: myUid,
+          name: myName,
+          joinedAt: Date.now(),
+          puzzleIdx: idx
+        }).catch(function() {});
+        B.cleanQueue = function() { qDoc.delete().catch(function() {}); };
+      } catch(e) {}
+    }
+
     B.timers.push(setTimeout(function () {
-      if (st) st.textContent = 'Rival ready: ' + name + ' (computer)'; if (radar) radar.classList.remove('searching');
+      if (B.cleanQueue) { B.cleanQueue(); B.cleanQueue = null; }
+      if (st) st.textContent = 'Rival ready: ' + name; if (radar) radar.classList.remove('searching');
       B.timers.push(setTimeout(function () {
         var go = function (paid) { B.cur = null; B.next = { name: name, pot: paid }; app.navigate('puzzle', SETS.battle.base + idx); };
         if (!free && window.ArroutCoins) window.ArroutCoins.stake(name, function () { bpaidAdd(); go(true); }); else go(false);
       }, 900));
-    }, 1500 + Math.random() * 1200));
+    }, 2000 + Math.random() * 800));
   }
   function cancelBattle() {
+    if (B.cleanQueue) { B.cleanQueue(); B.cleanQueue = null; }
     bclear(); B.next = null;
     var st = $('matchmaking-status-text'), radar = $('matchmaking-radar');
     if (st) st.textContent = 'Ready to Duel'; if (radar) radar.classList.remove('searching');

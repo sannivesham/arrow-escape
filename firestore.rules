@@ -3,12 +3,11 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // ===============================================================
-    // Assumed Data Model
+    // Assumed Data Models & Schema Documentation
     // ===============================================================
     //
     // Collection: users
     // Document ID: {userId} (Must match request.auth.uid)
-    //
     // Document Fields:
     //   - userId: string (required, immutable, must equal request.auth.uid)
     //   - coins: number (required, non-negative integer/number, >= 0, <= 1000000000)
@@ -24,6 +23,32 @@ service cloud.firestore {
     //   - createdAt: timestamp (optional, immutable)
     //   - updatedAt: timestamp (optional)
     //   - lastSyncedAt: timestamp (optional)
+    //
+    // Collection: rooms
+    // Document ID: {roomId}
+    // Document Fields:
+    //   - code: string (required, room code e.g. 5 alphanumeric chars)
+    //   - lastActivity: number or timestamp (optional, epoch timestamp of latest heartbeat)
+    //   - members: map (optional, max 20 players map: { [playerId]: { presence: map, lastSeen: number } })
+    //
+    // Subcollection: tournaments/{weekId}/scores
+    // Document ID: {userId} (Player UID or local player id)
+    // Document Fields:
+    //   - uid: string (required player id)
+    //   - username: string (display name)
+    //   - photoURL: string (avatar URL)
+    //   - timeSec: number (required, > 0 and < 86400)
+    //   - runs: number (attempt count)
+    //   - createdAt: timestamp
+    //   - updatedAt: timestamp
+    //
+    // Collection: battles_queue
+    // Document ID: {userId} (Player UID or local player id)
+    // Document Fields:
+    //   - uid: string (must match document id {userId})
+    //   - name: string (player display name)
+    //   - joinedAt: number or timestamp (queue timestamp)
+    //   - puzzleIdx: number (puzzle index)
     //
     // ===============================================================
 
@@ -176,6 +201,28 @@ service cloud.firestore {
         (!('lastSyncedAt' in data) || data.lastSyncedAt is timestamp);
     }
 
+    // Validate room document structure
+    function isValidRoomDoc(data) {
+      return data.keys().hasOnly(['code', 'lastActivity', 'members']) &&
+        ('code' in data) &&
+        data.code is string &&
+        data.code.size() <= 20 &&
+        (!('lastActivity' in data) || data.lastActivity is number || data.lastActivity is timestamp) &&
+        (!('members' in data) || (data.members is map && data.members.size() <= 20));
+    }
+
+    // Check if the current user is host in the room's members map
+    function isRoomHost() {
+      return request.auth != null &&
+        resource.data != null &&
+        ('members' in resource.data) &&
+        resource.data.members is map &&
+        (request.auth.uid in resource.data.members) &&
+        ('presence' in resource.data.members[request.auth.uid]) &&
+        resource.data.members[request.auth.uid].presence is map &&
+        resource.data.members[request.auth.uid].presence.host == true;
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -185,7 +232,7 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // User data document path: /users/{userId}
+    // 1. User game data & cloud sync: /users/{userId}
     match /users/{userId} {
       // Only the authenticated owner can read their own game data
       allow read: if isOwner(userId);
@@ -201,6 +248,60 @@ service cloud.firestore {
 
       // Delete: Authenticated owner only (allows account deletion / reset)
       allow delete: if isOwner(userId);
+    }
+
+    // 2. Play with Friends (Real-time Multiplayer Rooms): /rooms/{roomId}
+    match /rooms/{roomId} {
+      // Public / authenticated read to look up rooms by 5-character codes and observe peer states
+      allow read: if true;
+
+      // Create or update room document with validated allowed fields, member bounds, and code type
+      allow create, update: if isValidRoomDoc(request.resource.data);
+
+      // Delete room: allowed if authenticated or designated room host
+      allow delete: if request.auth != null || isRoomHost();
+    }
+
+    // 3. Weekly Tournament (Global Live Leaderboard): /tournaments/{weekId}/scores/{userId}
+    match /tournaments/{weekId} {
+      // Allow reading tournament root metadata
+      allow read: if true;
+      allow write: if false;
+
+      match /scores/{userId} {
+        // Anyone can view the tournament leaderboard
+        allow read: if true;
+
+        // Create score entry: must have valid timeSec within range and allowed leaderboard fields
+        allow create: if request.resource.data.timeSec is number &&
+                         request.resource.data.timeSec > 0 &&
+                         request.resource.data.timeSec < 86400 &&
+                         request.resource.data.keys().hasOnly([
+                           'uid', 'username', 'photoURL', 'timeSec', 'runs', 'createdAt', 'updatedAt'
+                         ]);
+
+        // Update score entry: must have valid timeSec within range and allowed leaderboard fields
+        allow update: if request.resource.data.timeSec is number &&
+                         request.resource.data.timeSec > 0 &&
+                         request.resource.data.timeSec < 86400 &&
+                         request.resource.data.keys().hasOnly([
+                           'uid', 'username', 'photoURL', 'timeSec', 'runs', 'createdAt', 'updatedAt'
+                         ]);
+
+        // Leaderboard scores cannot be arbitrarily deleted by clients
+        allow delete: if false;
+      }
+    }
+
+    // 4. Battle (1v1 Live Matchmaking Queue): /battles_queue/{userId}
+    match /battles_queue/{userId} {
+      // Anyone can read queue entries to find matchmaking opponents
+      allow read: if true;
+
+      // Allow join (create), update, or dequeue (delete)
+      allow write: if request.resource.data == null ||
+                      (request.resource.data.keys().hasOnly(['uid', 'name', 'joinedAt', 'puzzleIdx']) &&
+                       request.resource.data.uid == userId);
     }
   }
 }

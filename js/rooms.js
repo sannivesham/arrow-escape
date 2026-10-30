@@ -52,20 +52,116 @@
       leave: function () { try { send('bye'); } catch (e) {} clearInterval(timer); ch.close(); subs.clear(); }
     };
   }
-  var transportP = null;
+  /* ---------- Firebase Firestore Room Transport ---------- */
+  function fbJoin(name) {
+    var db = firebase.firestore();
+    var authUser = (firebase.auth && firebase.auth().currentUser);
+    var smData = (window.storageManager && window.storageManager.data) || {};
+    var myId = authUser ? authUser.uid : (smData.playerId || ('p_' + Math.random().toString(36).slice(2, 10)));
+    var docRef = db.collection('rooms').doc(name);
+    var peersMap = new Map();
+    var mine = {};
+    var subs = new Set();
+    var active = true;
+
+    function list() {
+      var out = [{ peer: myId, isMe: true, sameTab: false, kind: 'viewer', presence: mine }];
+      peersMap.forEach(function (v, k) {
+        out.push({ peer: k, isMe: false, sameTab: false, kind: 'viewer', presence: v.presence });
+      });
+      return out;
+    }
+
+    function emit() {
+      var l = list();
+      subs.forEach(function (f) { try { f({ peers: l }); } catch (e) {} });
+    }
+
+    function sendPresence() {
+      if (!active) return;
+      var update = {
+        code: name.replace(/^r/, ''),
+        lastActivity: Date.now()
+      };
+      update['members.' + myId] = {
+        presence: mine,
+        lastSeen: Date.now()
+      };
+      docRef.set(update, { merge: true }).catch(function (err) {
+        console.warn('[FirebaseRoom] update error:', err);
+      });
+    }
+
+    var unsubSnapshot = docRef.onSnapshot(function (doc) {
+      if (!active) return;
+      if (!doc.exists) {
+        peersMap.clear();
+        emit();
+        return;
+      }
+      var data = doc.data() || {};
+      var members = data.members || {};
+      var now = Date.now();
+      peersMap.clear();
+
+      Object.keys(members).forEach(function (pid) {
+        if (pid === myId) return;
+        var m = members[pid];
+        if (!m) return;
+        if (m.lastSeen && (now - m.lastSeen > 35000)) return;
+        peersMap.set(pid, {
+          presence: m.presence || {},
+          last: m.lastSeen || now
+        });
+      });
+      emit();
+    }, function (err) {
+      console.warn('[FirebaseRoom] onSnapshot error:', err);
+    });
+
+    var timer = setInterval(function () {
+      if (!active) return;
+      var hb = { lastActivity: Date.now() };
+      hb['members.' + myId + '.lastSeen'] = Date.now();
+      docRef.set(hb, { merge: true }).catch(function () {});
+    }, 4000);
+
+    return {
+      presence: function (p) {
+        mine = Object.assign({}, mine, p);
+        sendPresence();
+        emit();
+      },
+      peers: list,
+      onPeers: function (f) {
+        subs.add(f);
+        try { f({ peers: list() }); } catch (e) {}
+        return function () { subs.delete(f); };
+      },
+      leave: function () {
+        active = false;
+        clearInterval(timer);
+        if (unsubSnapshot) { try { unsubSnapshot(); } catch (e) {} unsubSnapshot = null; }
+        subs.clear();
+        var del = {};
+        del['members.' + myId] = firebase.firestore.FieldValue.delete();
+        del['lastActivity'] = Date.now();
+        docRef.update(del).catch(function () {});
+      }
+    };
+  }
+
   function getTransport() {
-    if (transportP) return transportP;
-    transportP = (async function () {
-      try {
-        if (window.claude && window.claude.use) {
-          var r = await window.claude.use('room');
-          if (r && r.join) return { kind: 'live', join: function (n) { return r.join(n); } };
-        }
-      } catch (e) {}
-      if (typeof BroadcastChannel !== 'undefined') return { kind: 'local', join: function (n) { return bcJoin(n); } };
-      return null;
-    })();
-    return transportP;
+    try {
+      if (typeof firebase !== 'undefined' && firebase.firestore && window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && !window.FIREBASE_CONFIG.apiKey.includes('YOUR_API_KEY')) {
+        return Promise.resolve({
+          kind: 'live',
+          join: function (n) { return fbJoin(n); }
+        });
+      }
+    } catch (e) {}
+    if (typeof BroadcastChannel !== 'undefined') return Promise.resolve({ kind: 'local', join: function (n) { return bcJoin(n); } });
+    return Promise.resolve(null);
   }
 
   /* ---------- views ---------- */

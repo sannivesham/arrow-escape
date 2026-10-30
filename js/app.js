@@ -543,12 +543,65 @@ class ArroutApp {
     const rows = document.getElementById('tournament-leaderboard-rows');
     if (rows) {
       const sc = info.score;
-      rows.innerHTML = `
-        <div style="background:#FFF;border-radius:16px;padding:12px 16px;box-shadow:var(--clay-shadow);display:flex;justify-content:space-between;align-items:center;">
-          <div><div style="font-weight:800;font-size:0.9rem;color:var(--text-navy);">Your best time</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);">${sc ? sc.runs + ' run' + (sc.runs === 1 ? '' : 's') + ' this week' : 'No run yet this week'}</div></div>
-          <div style="font-weight:800;color:var(--accent-gold);">${sc ? sc.timeSec + 's' : '—'}</div>
-        </div>`;
+      const myUid = (firebase.auth && firebase.auth().currentUser && firebase.auth().currentUser.uid) ||
+                    (window.storageManager && window.storageManager.data && window.storageManager.data.playerId);
+
+      const renderBoard = (globalScores = []) => {
+        let html = `
+          <div style="background:#FFF;border-radius:16px;padding:12px 16px;box-shadow:var(--clay-shadow);display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div>
+              <div style="font-weight:800;font-size:0.9rem;color:var(--text-navy);">Your best time</div>
+              <div style="font-size:0.72rem;color:var(--text-muted);">${sc ? sc.runs + ' run' + (sc.runs === 1 ? '' : 's') + ' this week' : 'No run yet this week'}</div>
+            </div>
+            <div style="font-weight:800;font-size:1.05rem;color:var(--accent-gold);">${sc ? sc.timeSec + 's' : '—'}</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 4px 6px;">
+            <span style="font-size:0.76rem;font-weight:800;letter-spacing:0.8px;color:var(--text-muted);text-transform:uppercase;">Global Leaderboard</span>
+            <span style="font-size:0.68rem;background:#ECFDF5;color:#059669;padding:2px 8px;border-radius:10px;font-weight:700;">LIVE</span>
+          </div>`;
+
+        if (!globalScores.length) {
+          html += `
+            <div style="background:#FFF;border-radius:14px;padding:16px;text-align:center;box-shadow:var(--clay-shadow);color:var(--text-muted);font-size:0.8rem;">
+              ${sc ? 'Syncing your score with global players...' : 'Be the first player worldwide to set a tournament record this week!'}
+            </div>`;
+        } else {
+          html += `<div style="display:flex;flex-direction:column;gap:6px;">`;
+          globalScores.forEach((p, idx) => {
+            const isMe = p.uid === myUid;
+            const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+            const avatar = p.photoURL
+              ? `<img src="${p.photoURL}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">`
+              : `<span style="width:24px;height:24px;border-radius:50%;background:#E2E8F0;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--text-navy);">${(p.username || 'P').charAt(0).toUpperCase()}</span>`;
+
+            html += `
+              <div style="background:${isMe ? '#FEF9C3' : '#FFF'};border:${isMe ? '1.5px solid #FACC15' : '1px solid rgba(0,0,0,0.04)'};border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:10px;box-shadow:var(--clay-shadow);">
+                <span style="font-weight:800;font-size:0.88rem;width:24px;text-align:center;">${rankEmoji}</span>
+                ${avatar}
+                <span style="flex:1;font-weight:${isMe ? '800' : '700'};font-size:0.82rem;color:var(--text-navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                  ${p.username || 'ArrowPilot'} ${isMe ? '<span style="font-size:0.7rem;color:#B45309;">(You)</span>' : ''}
+                </span>
+                <span style="font-weight:800;font-size:0.85rem;color:var(--text-navy);font-variant-numeric:tabular-nums;">
+                  ${p.timeSec}s
+                </span>
+              </div>`;
+          });
+          html += `</div>`;
+        }
+        rows.innerHTML = html;
+      };
+
+      // Initial render with local best
+      renderBoard([]);
+
+      // Realtime Firebase subscription
+      if (this._tournamentUnsub) {
+        try { this._tournamentUnsub(); } catch (e) {}
+        this._tournamentUnsub = null;
+      }
+      this._tournamentUnsub = tm.listenLeaderboard(info.weekId, (list) => {
+        renderBoard(list);
+      });
     }
   }
 
