@@ -25,11 +25,12 @@ service cloud.firestore {
     //   - lastSyncedAt: timestamp (optional)
     //
     // Collection: rooms
-    // Document ID: {roomId}
+    // Document ID: {roomId} (Room identifier / room code)
     // Document Fields:
-    //   - code: string (required, room code e.g. 5 alphanumeric chars)
-    //   - lastActivity: number or timestamp (optional, epoch timestamp of latest heartbeat)
-    //   - members: map (optional, max 20 players map: { [playerId]: { presence: map, lastSeen: number } })
+    //   - code: string (room code)
+    //   - lastActivity: number or timestamp (epoch timestamp of latest heartbeat)
+    //   - members: map (nested presence map of players and heartbeat metadata)
+    //   - Additional game state and sync properties
     //
     // Subcollection: tournaments/{weekId}/scores
     // Document ID: {userId} (Player UID or local player id)
@@ -201,28 +202,6 @@ service cloud.firestore {
         (!('lastSyncedAt' in data) || data.lastSyncedAt is timestamp);
     }
 
-    // Validate room document structure
-    function isValidRoomDoc(data) {
-      return data.keys().hasOnly(['code', 'lastActivity', 'members']) &&
-        ('code' in data) &&
-        data.code is string &&
-        data.code.size() <= 20 &&
-        (!('lastActivity' in data) || data.lastActivity is number || data.lastActivity is timestamp) &&
-        (!('members' in data) || (data.members is map && data.members.size() <= 20));
-    }
-
-    // Check if the current user is host in the room's members map
-    function isRoomHost() {
-      return request.auth != null &&
-        resource.data != null &&
-        ('members' in resource.data) &&
-        resource.data.members is map &&
-        (request.auth.uid in resource.data.members) &&
-        ('presence' in resource.data.members[request.auth.uid]) &&
-        resource.data.members[request.auth.uid].presence is map &&
-        resource.data.members[request.auth.uid].presence.host == true;
-    }
-
     // ===============================================================
     // Rules
     // ===============================================================
@@ -252,14 +231,9 @@ service cloud.firestore {
 
     // 2. Play with Friends (Real-time Multiplayer Rooms): /rooms/{roomId}
     match /rooms/{roomId} {
-      // Public / authenticated read to look up rooms by 5-character codes and observe peer states
-      allow read: if true;
-
-      // Create or update room document with validated allowed fields, member bounds, and code type
-      allow create, update: if isValidRoomDoc(request.resource.data);
-
-      // Delete room: allowed if authenticated or designated room host
-      allow delete: if request.auth != null || isRoomHost();
+      // Full read and write access for both authenticated players and guest players
+      // to join rooms, update presence (nested members map), send heartbeats, and leave
+      allow read, write: if true;
     }
 
     // 3. Weekly Tournament (Global Live Leaderboard): /tournaments/{weekId}/scores/{userId}

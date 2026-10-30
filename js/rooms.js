@@ -79,16 +79,18 @@
 
     function sendPresence() {
       if (!active) return;
-      var update = {
-        code: name.replace(/^r/, ''),
-        lastActivity: Date.now()
-      };
-      update['members.' + myId] = {
+      var memberPayload = {};
+      memberPayload[myId] = {
         presence: mine,
         lastSeen: Date.now()
       };
+      var update = {
+        code: name.replace(/^r/, ''),
+        lastActivity: Date.now(),
+        members: memberPayload
+      };
       docRef.set(update, { merge: true }).catch(function (err) {
-        console.warn('[FirebaseRoom] update error:', err);
+        console.error('[FirebaseRoom] update error:', err);
       });
     }
 
@@ -108,7 +110,8 @@
         if (pid === myId) return;
         var m = members[pid];
         if (!m) return;
-        if (m.lastSeen && (now - m.lastSeen > 35000)) return;
+        // prune only if inactive > 90s
+        if (m.lastSeen && (now - m.lastSeen > 90000)) return;
         peersMap.set(pid, {
           presence: m.presence || {},
           last: m.lastSeen || now
@@ -121,9 +124,15 @@
 
     var timer = setInterval(function () {
       if (!active) return;
-      var hb = { lastActivity: Date.now() };
-      hb['members.' + myId + '.lastSeen'] = Date.now();
-      docRef.set(hb, { merge: true }).catch(function () {});
+      var hbMember = {};
+      hbMember[myId] = {
+        presence: mine,
+        lastSeen: Date.now()
+      };
+      docRef.set({
+        lastActivity: Date.now(),
+        members: hbMember
+      }, { merge: true }).catch(function () {});
     }, 4000);
 
     return {
@@ -336,7 +345,15 @@
 
   /* ---------- buttons ---------- */
   function wire() {
-    $('room-create').onclick = function () { enterRoom(newCode(), true); };
+    $('room-create').onclick = async function () {
+      var btn = $('room-create');
+      btn.disabled = true;
+      btn.textContent = 'CREATING...';
+      var code = newCode();
+      await enterRoom(code, true);
+      btn.disabled = false;
+      btn.textContent = 'CREATE ROOM';
+    };
     $('room-join').onclick = function () { $('room-join-error').hidden = true; $('room-code-input').value = ''; show('join'); setTimeout(function () { $('room-code-input').focus(); }, 50); };
     $('room-join-back').onclick = function () { show('menu'); };
     $('room-code-input').oninput = function () { this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5); };
@@ -344,12 +361,48 @@
     $('room-join-go').onclick = async function () {
       var c = $('room-code-input').value.toLowerCase().replace(/[^a-z0-9]/g, '');
       if (c.length !== 5) { $('room-join-error').textContent = 'The code has 5 letters or numbers.'; $('room-join-error').hidden = false; return; }
+      var errEl = $('room-join-error');
+      errEl.hidden = true;
+      var btn = $('room-join-go');
+      btn.disabled = true;
+      btn.textContent = 'CHECKING...';
+
+      // Check Firestore room existence
+      if (typeof firebase !== 'undefined' && firebase.firestore && firebase.apps.length) {
+        try {
+          var snap = await firebase.firestore().collection('rooms').doc('r' + c).get();
+          if (!snap.exists) {
+            btn.disabled = false;
+            btn.textContent = 'JOIN';
+            errEl.textContent = 'Room not found. Check the code with the host.';
+            errEl.hidden = false;
+            return;
+          }
+          var rData = snap.data() || {};
+          var members = rData.members || {};
+          var now = Date.now();
+          var hasHost = Object.values(members).some(function(m) {
+            return m && m.presence && m.presence.host && (!m.lastSeen || (now - m.lastSeen < 120000));
+          });
+          if (!hasHost) {
+            btn.disabled = false;
+            btn.textContent = 'JOIN';
+            errEl.textContent = 'Room found, but host is not active. Ask host to re-open.';
+            errEl.hidden = false;
+            return;
+          }
+        } catch (e) {
+          console.warn('[Rooms] Firestore check error:', e);
+        }
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'JOIN';
       var ok = await enterRoom(c, false);
-      if (ok) setTimeout(function () {
-        // a real room has a host in it
-        var hostHere = R.conn && R.conn.peers().some(function (p) { return !p.isMe && p.presence && p.presence.host; });
-        if (!hostHere && R.code === c) { toast('No host found yet. Check the code.'); }
-      }, 1800);
+      if (!ok) {
+        errEl.textContent = 'Could not enter room. Please try again.';
+        errEl.hidden = false;
+      }
     };
     $('room-share').onclick = async function () {
       var text = 'Join my Arrout room! Code: ' + R.code.toUpperCase(), link = linkFor(R.code);
