@@ -479,6 +479,9 @@
           <div id="profile-player-id" style="font-size: 0.75rem; color: var(--text-muted);">ID: AE-000000</div>
         </div>
 
+        <!-- Google Cloud Save & Auth Box -->
+        <div id="profile-google-auth-box"></div>
+
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px;">
           <div style="background: #FFF; border-radius: 16px; padding: 12px 4px; text-align: center; box-shadow: var(--clay-shadow);">
             <div id="profile-stat-clears" style="font-weight: 800; font-size: 1.05rem; color: var(--text-navy);">0</div>
@@ -567,7 +570,7 @@
           <div style="margin-bottom: 24px; font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;">
             <b>About ARROUT:</b><br>
             Version 2.1.0<br>
-            Your progress, coins and best times are stored on this device only.
+            Your progress is stored locally on this device and can optionally sync to Google Cloud via Google Sign-In.
           </div>
 
           <button id="btn-reset-data" style="width: 100%; background: #FEE2E2; border: 1px solid #FECACA; color: #DC2626; padding: 12px; border-radius: 16px; font-weight: 800; cursor: pointer;">
@@ -640,6 +643,12 @@
 <script src="js/arrow-path-generator.js"></script>
 <script src="js/arrow-path-engine.js"></script>
 <script src="js/storage.js"></script>
+<!-- Firebase & Cloud Sync (Local + Google Cloud) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/firebase-sync.js"></script>
 <script src="js/tournament.js"></script>
 <script src="js/app.js"></script>
 <script src="js/intro.js"></script>
