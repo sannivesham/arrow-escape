@@ -64,7 +64,7 @@
       return Math.min(1000, (done.length ? Math.max.apply(null, done) : 0) + 1);
     } catch (e) { return 1; }
   }
-  function addCoins(n) { try { window.storageManager.data.coins += n; window.storageManager.save(); } catch (e) {} }
+  function addCoins() {}
 
   /* ================= DAILY ================= */
   var DK = 'arrout_daily_v1';
@@ -89,7 +89,7 @@
     var btn = $('btn-play-daily'); if (!e) { info.textContent = 'No puzzle available.'; return; }
     var did = st.done[key];
     info.innerHTML = '<div class="di-tag">EXPERT</div><div class="di-main">' + esc(e.icon + ' ' + e.shapeName) + '</div><div class="di-sub">' + e.arrowCount + ' arrows · ' + e.cols + '×' + e.rows + ' grid</div>' +
-      (did ? '<div class="di-done">✅ Cleared today in ' + fmt(did.ms) + '. A new puzzle comes tomorrow.</div>' : '<div class="di-sub">Clear it today to earn 50 bonus coins and grow your streak.</div>');
+      (did ? '<div class="di-done">✅ Cleared today in ' + fmt(did.ms) + '. A new puzzle comes tomorrow.</div>' : '<div class="di-sub">Clear it today to grow your daily streak.</div>');
     btn.textContent = did ? 'PLAY AGAIN' : "PLAY TODAY'S PUZZLE";
     btn.onclick = function () { app.navigate('puzzle', SETS.daily.base + idx); };
   }
@@ -103,8 +103,8 @@
       dsave(st);
       var s = streak(st.done);
       try { window.storageManager.data.stats.streakDays = s; window.storageManager.data.stats.lastDailyDate = key; } catch (e) {}
-      if (first) addCoins(50); else try { window.storageManager.save(); } catch (e) {}
-      app.showVictoryModal({ title: 'Daily Challenge Cleared!', time: stats.totalTime + 's', moves: stats.moves, earnedCoins: first ? 50 : 0,
+      try { window.storageManager.save(); } catch (e) {}
+      app.showVictoryModal({ title: 'Daily Challenge Cleared!', time: stats.totalTime + 's', moves: stats.moves, earnedCoins: 0,
         nextAction: function () { app.navigate('daily', null, { replace: true }); } });
       setExtra('<div class="vx-note">🔥 Streak: ' + s + ' day' + (s === 1 ? '' : 's') + '</div>');
     };
@@ -123,9 +123,7 @@
     bclear();
     var st = $('matchmaking-status-text'), radar = $('matchmaking-radar'), N = SETS.battle.get().length;
     if (!N) { toast('Battle puzzles are missing.'); return; }
-    var free = bpaid() >= MAX_PAID;
-    if (!free && window.ArroutCoins && !window.ArroutCoins.canStake()) return;
-    if (free) toast('You have used your ' + MAX_PAID + ' coin battles for today. This one is just for fun.');
+    
     var name = NAMES[Math.floor(Math.random() * NAMES.length)], idx = Math.floor(Math.random() * N);
     if (st) st.textContent = 'Searching for opponent...'; if (radar) radar.classList.add('searching');
     if ($('matchmaking-actions')) $('matchmaking-actions').style.display = 'block';
@@ -157,8 +155,7 @@
       if (B.cleanQueue) { B.cleanQueue(); B.cleanQueue = null; }
       if (st) st.textContent = 'Rival ready: ' + name; if (radar) radar.classList.remove('searching');
       B.timers.push(setTimeout(function () {
-        var go = function (paid) { B.cur = null; B.next = { name: name, pot: paid }; app.navigate('puzzle', SETS.battle.base + idx); };
-        if (!free && window.ArroutCoins) window.ArroutCoins.stake(name, function () { bpaidAdd(); go(true); }); else go(false);
+        B.cur = null; B.next = { name: name }; app.navigate("puzzle", SETS.battle.base + idx);
       }, 900));
     }, 2000 + Math.random() * 800));
   }
@@ -180,19 +177,17 @@
     }
     paint(N);
     var again = function () { bclear(); app.navigate(battleScreenName(), null, { replace: true }); };
-    var badge = $('pvp-pot-badge');
-    if (!badge && hud) { badge = document.createElement('div'); badge.id = 'pvp-pot-badge'; hud.appendChild(badge); }
-    if (badge) { badge.style.display = opp.pot ? '' : 'none'; badge.textContent = '\uD83E\uDE99 Pot: 100 coins. Winner takes all.'; }
+    
     function end(emoji, title, rows, winners, note, outcome) {
       var b = B.opp; if (b) b.over = true;
       if (B.tick) { clearInterval(B.tick); B.tick = null; }
       eng.isLocked = true;
-      if (badge) badge.style.display = 'none';
+      
       var show = function () {
         app.showResultModal({ emoji: emoji, title: title, button: 'BACK TO BATTLE', nextAction: again });
         setExtra(boardHtml(rows, winners, note));
       };
-      if (b && b.pot && window.ArroutCoins) window.ArroutCoins.settle(outcome, b.name, show); else show();
+      show();
     }
     B.tick = setInterval(function () {
       var b = B.opp; if (!b || b.over) return;
@@ -205,7 +200,7 @@
           if (b.over) return;
           var rows = [{ name: b.name, ms: T, me: false }, { name: window.storageManager.data.username || 'You', ms: null, me: true, failed: false }];
           try { window.storageManager.recordBattle(false); } catch (e) {}
-          end('😮', b.name + ' wins!', rows, [rows[0]], opp.pot ? 'They solved it first. You lose 50 coins.' : 'They solved it first. No coins at stake.', 'lose');
+          end('😮', b.name + ' wins!', rows, [rows[0]], 'They solved it first.', 'lose');
         }, 500));
         return;
       }
@@ -215,7 +210,7 @@
       var b = B.opp; if (!b || b.over) return;
       var rows = [{ name: b.name, ms: null, me: false }, { name: window.storageManager.data.username || 'You', ms: null, me: true, failed: true }];
       try { window.storageManager.recordBattle(false); } catch (e) {}
-      end('', b.name + ' wins!', rows, [rows[0]], opp.pot ? 'You ran out of lives. You lose 50 coins.' : 'You ran out of lives.', 'lose');
+      end('', b.name + ' wins!', rows, [rows[0]], 'You ran out of lives.', 'lose');
     };
     eng.onComplete = function () {
       var b = B.opp; if (!b || b.over) return;
@@ -223,10 +218,10 @@
       var rows = [{ name: me, ms: my, me: true }, { name: b.name, ms: b.done ? T : null, me: false }];
       if (b.done && my - T <= 500) {                      // inside the tie window
         rows.sort(function (x, y) { return x.ms - y.ms; });
-        end('🤝', "It's a tie!", rows, rows, opp.pot ? 'Both finished within 0.5 seconds. Entry fees returned.' : 'Both finished within 0.5 seconds.', 'tie');
+        end('🤝', "It's a tie!", rows, rows, 'Both finished within 0.5 seconds.', 'tie');
       } else {
         try { window.storageManager.recordBattle(true); } catch (e) {}
-        end('🏆', me + ' wins!', rows, [rows[0]], b.name + (opp.pot ? ' is still solving. You win 100 coins!' : ' is still solving. Nice one!'), 'win');
+        end('🏆', me + ' wins!', rows, [rows[0]], b.name + ' is still solving. Nice one!', 'win');
       }
     };
   }
@@ -270,9 +265,9 @@
       if (name !== 'puzzle' && !app._holding) {
         if (B.opp && !B.opp.over && B.opp.pot) {            // leaving a paid match = forfeit
           try { window.storageManager.recordBattle(false); } catch (e) {}
-          toast('You left the match. ' + B.opp.name + ' takes the pot.');
+          toast('You left the match.');
         }
-        var pb = $('pvp-pot-badge'); if (pb) pb.style.display = 'none';
+        
         B.cur = null; bclear();
         if (modeOf(app.currentLevelNum)) app.currentLevelNum = progressLevel();
         var h = $('pvp-live-hud'); if (h && !(window.ArroutRoom && window.ArroutRoom.inGame)) h.style.display = 'none';

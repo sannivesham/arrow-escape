@@ -126,12 +126,7 @@ class ArroutApp {
 
   updateHUD() {
     const data = (window.storageManager && window.storageManager.data) || { coins: 0, username: 'ArrowPilot' };
-    const coinsVal = Number(data.coins ?? 0).toLocaleString();
-    document.querySelectorAll('.user-coin-count').forEach(el => el.textContent = coinsVal);
-    const homeCoin = document.getElementById('home-coin-count');
-    if (homeCoin) homeCoin.textContent = coinsVal;
-    const shopCoin = document.getElementById('shop-coins');
-    if (shopCoin) shopCoin.textContent = coinsVal;
+    
     document.querySelectorAll('.user-name-display').forEach(el => el.textContent = data.username);
     const inp = document.getElementById('profile-username-input');
     if (inp && document.activeElement !== inp && data.username) inp.value = data.username;
@@ -444,7 +439,8 @@ class ArroutApp {
     document.getElementById('victory-title').textContent = title;
     document.getElementById('victory-stat-time').textContent = time;
     document.getElementById('victory-stat-moves').textContent = moves;
-    document.getElementById('victory-stat-coins').textContent = coinsText || `+${earnedCoins} Coins`;
+    const coinsEl = document.getElementById('victory-stat-coins');
+    if (coinsEl && coinsEl.parentElement) coinsEl.parentElement.style.display = 'none';
 
     modal.classList.add('open');
     const nextBtn = document.getElementById('btn-victory-next');
